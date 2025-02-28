@@ -173,8 +173,16 @@
 <p>因此对于这个复杂的目录结构啊，我们要用</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -I../include fibo.c main.c -o palindrome</span><br></pre></td></tr></table></figure>
 
-<p>真的是这样吗，这真是最麻烦的地方了，我们来看看题目要求吧</p>
-<p>![屏幕截图 2025-02-27 222051](25OS-lab0-off\屏幕截图 2025-02-27 222051.png)</p>
+<p>真的是这样吗，我们来看看题目要求吧</p>
+<p>要求在code当中分别生成 .o 文件，也就是fibo.o 和 main.o 两个文件</p>
+<p>注意fibo.o和main.o 是汇编的结果</p>
+<p>因此使用 命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c main.c</span><br></pre></td></tr></table></figure>
+
+
+
+
+
 <h2 id="来看看-sed-怎么用吧"><a href="#来看看-sed-怎么用吧" class="headerlink" title="来看看 sed 怎么用吧"></a>来看看 sed 怎么用吧</h2><ul>
 <li><h3 id="替换文本-s命令"><a href="#替换文本-s命令" class="headerlink" title="替换文本 s命令"></a>替换文本 s命令</h3></li>
 </ul>
