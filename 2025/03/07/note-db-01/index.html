@@ -1,0 +1,443 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>note-db-01 | GGGengXXX</title><meta name="author" content="ggengx"><meta name="copyright" content="ggengx"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="note 数据模型这个过程就像将现实中的事物一步步翻译成计算机能理解的语言，每个阶段都在增加技术细节，同时逐渐远离人类的直觉。我们可以通过一个「图书馆管理系统」的例子来理解：  1. 现实世界（人类视角）特征：完全人类可理解，但模糊不精确例子：  读者来图书馆借书 书有书名、作者、分类 管理员要记录谁借了哪本书，何时归还  问题：“记录借书”只是一个模糊的需求，无法直接告诉计算机怎么做。  2.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="note-db-01">
+<meta property="og:url" content="http://gggengxxx.github.io/2025/03/07/note-db-01/index.html">
+<meta property="og:site_name" content="GGGengXXX">
+<meta property="og:description" content="note 数据模型这个过程就像将现实中的事物一步步翻译成计算机能理解的语言，每个阶段都在增加技术细节，同时逐渐远离人类的直觉。我们可以通过一个「图书馆管理系统」的例子来理解：  1. 现实世界（人类视角）特征：完全人类可理解，但模糊不精确例子：  读者来图书馆借书 书有书名、作者、分类 管理员要记录谁借了哪本书，何时归还  问题：“记录借书”只是一个模糊的需求，无法直接告诉计算机怎么做。  2.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://gggengxxx.github.io/img/maomao.jpg">
+<meta property="article:published_time" content="2025-03-07T06:48:12.000Z">
+<meta property="article:modified_time" content="2025-03-07T14:55:03.523Z">
+<meta property="article:author" content="ggengx">
+<meta property="article:tag" content="note-db">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://gggengxxx.github.io/img/maomao.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "note-db-01",
+  "url": "http://gggengxxx.github.io/2025/03/07/note-db-01/",
+  "image": "http://gggengxxx.github.io/img/maomao.jpg",
+  "datePublished": "2025-03-07T06:48:12.000Z",
+  "dateModified": "2025-03-07T14:55:03.523Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "ggengx",
+      "url": "http://gggengxxx.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://gggengxxx.github.io/2025/03/07/note-db-01/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'note-db-01',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">GGGengXXX</span></a><a class="nav-page-title" href="/"><span class="site-name">note-db-01</span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">note-db-01</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-03-07T06:48:12.000Z" title="Created 2025-03-07 14:48:12">2025-03-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-03-07T14:55:03.523Z" title="Updated 2025-03-07 22:55:03">2025-03-07</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>note</p>
+<h1 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h1><p>这个过程就像将现实中的事物一步步翻译成计算机能理解的语言，每个阶段都在增加技术细节，同时逐渐远离人类的直觉。我们可以通过一个「图书馆管理系统」的例子来理解：</p>
+<hr>
+<h3 id="1-现实世界（人类视角）"><a href="#1-现实世界（人类视角）" class="headerlink" title="1. 现实世界（人类视角）"></a><strong>1. 现实世界（人类视角）</strong></h3><p><strong>特征</strong>：完全人类可理解，但模糊不精确<br><strong>例子</strong>：</p>
+<ul>
+<li>读者来图书馆借书</li>
+<li>书有书名、作者、分类</li>
+<li>管理员要记录谁借了哪本书，何时归还</li>
+</ul>
+<p><strong>问题</strong>：<br>“记录借书”只是一个模糊的需求，无法直接告诉计算机怎么做。</p>
+<hr>
+<h3 id="2-概念模型（人类思维抽象）"><a href="#2-概念模型（人类思维抽象）" class="headerlink" title="2. 概念模型（人类思维抽象）"></a><strong>2. 概念模型（人类思维抽象）</strong></h3><p><strong>特征</strong>：用人类语言描述核心概念和关系<br><strong>工具</strong>：实体关系图（ER图）、流程图<br><strong>例子</strong>：</p>
+<ul>
+<li>明确实体：读者、图书、借阅记录</li>
+<li>定义关系：<ul>
+<li>一个读者可以借多本书</li>
+<li>一本书同一时间只能被一个读者借</li>
+<li>借阅记录包含借书时间、还书时间</li>
+</ul>
+</li>
+</ul>
+<p><strong>关键作用</strong>：<br>将现实需求转化为「业务人员和技术人员都能看懂」的蓝图。</p>
+<hr>
+<h3 id="3-逻辑模型（技术视角抽象）"><a href="#3-逻辑模型（技术视角抽象）" class="headerlink" title="3. 逻辑模型（技术视角抽象）"></a><strong>3. 逻辑模型（技术视角抽象）</strong></h3><p><strong>特征</strong>：用技术语言描述结构，但未涉及具体技术<br><strong>工具</strong>：关系型数据库设计、类图<br><strong>例子</strong>：</p>
+<ul>
+<li><p>设计数据库表：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 读者表（Reader）</span></span><br><span class="line">ReaderID (主键), 姓名, 电话, 注册时间</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 图书表（Book）</span></span><br><span class="line">BookID (主键), 书名, 作者, ISBN, 状态（在库<span class="operator">/</span>借出）</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 借阅记录表（Borrow）</span></span><br><span class="line">BorrowID, ReaderID (外键), BookID (外键), 借书时间, 还书时间</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义约束：</p>
+<ul>
+<li>图书状态必须为“在库”才能被借出</li>
+<li>同一读者不能同时借超过5本书</li>
+</ul>
+</li>
+</ul>
+<p><strong>人类理解难度↑</strong>：<br>需要理解主键、外键、数据约束等技术概念。</p>
+<hr>
+<h3 id="4-物理模型（机器优化视角）"><a href="#4-物理模型（机器优化视角）" class="headerlink" title="4. 物理模型（机器优化视角）"></a><strong>4. 物理模型（机器优化视角）</strong></h3><p><strong>特征</strong>：针对具体技术实现做优化<br><strong>工具</strong>：索引设计、存储引擎选择<br><strong>例子</strong>：</p>
+<ul>
+<li>在 <code>Book.ISBN</code> 字段创建索引，加快按ISBN查询速度</li>
+<li>将借阅记录表拆分为两个分区：<ul>
+<li>当前借阅（存储在SSD硬盘）</li>
+<li>历史记录（存储在机械硬盘）</li>
+</ul>
+</li>
+<li>选择InnoDB存储引擎支持事务</li>
+</ul>
+<p><strong>人类理解难度↑↑</strong>：<br>需要了解存储结构、硬件特性、数据库底层机制。</p>
+<hr>
+<h3 id="5-计算机世界（机器语言）"><a href="#5-计算机世界（机器语言）" class="headerlink" title="5. 计算机世界（机器语言）"></a><strong>5. 计算机世界（机器语言）</strong></h3><p><strong>特征</strong>：二进制代码或数据库文件<br><strong>例子</strong>：</p>
+<ul>
+<li>MySQL的 <code>.ibd</code> 文件存储表数据</li>
+<li>硬盘上的二进制位：<code>01001000 01100101</code> 表示 “He”</li>
+<li>内存中的数据结构：B+树索引节点</li>
+</ul>
+<p><strong>人类理解难度↑↑↑</strong>：<br>完全脱离自然语言，只能通过工具（如数据库客户端）间接解读。</p>
+<hr>
+<h3 id="为什么人类理解能力减弱？"><a href="#为什么人类理解能力减弱？" class="headerlink" title="为什么人类理解能力减弱？"></a><strong>为什么人类理解能力减弱？</strong></h3><ol>
+<li><strong>抽象层级变化</strong>：<ul>
+<li>现实世界 → 概念模型：用人类语言描述</li>
+<li>计算机世界：用机器语言描述</li>
+</ul>
+</li>
+<li><strong>技术细节增加</strong>：<ul>
+<li>逻辑模型开始引入主键、外键</li>
+<li>物理模型涉及存储结构、硬件优化</li>
+</ul>
+</li>
+<li><strong>直观性消失</strong>：<ul>
+<li>最终存储的二进制数据，无法直接对应现实中的“书”或“读者”</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="类比：建造房屋"><a href="#类比：建造房屋" class="headerlink" title="类比：建造房屋"></a><strong>类比：建造房屋</strong></h3><ul>
+<li><strong>现实世界</strong>：业主说“我要一栋现代风格的三层别墅”</li>
+<li><strong>概念模型</strong>：建筑师画出房屋外观和房间布局草图</li>
+<li><strong>逻辑模型</strong>：结构工程师设计梁柱承重方案</li>
+<li><strong>物理模型</strong>：施工队选择钢筋型号和混凝土配比</li>
+<li><strong>计算机世界</strong>：砖块、水泥、钢筋在工地上的实际堆砌</li>
+</ul>
+<p>越是后面的阶段，业主（非专业人员）越难理解其中的技术细节。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">A(现实世界)--&gt; B(概念模型)--&gt;C(逻辑模型)--&gt;D(物理模型)--&gt;E(计算机世界)</span><br></pre></td></tr></table></figure>
+
+<h1 id="概念模型"><a href="#概念模型" class="headerlink" title="概念模型"></a>概念模型</h1><ul>
+<li>概念模型用于信息世界的建模，是对现实世界的第一层抽象</li>
+</ul>
+<p>数据库的<strong>概念模型</strong>是数据库设计的<strong>第一步</strong>，它用<strong>人类能理解的抽象方式</strong>描述现实世界中的业务需求和核心数据关系，<strong>不涉及任何技术细节</strong>（如表结构、数据类型）。它是业务人员和技术人员沟通的“桥梁”。</p>
+<hr>
+<h3 id="概念模型的3个核心特点"><a href="#概念模型的3个核心特点" class="headerlink" title="概念模型的3个核心特点"></a><strong>概念模型的3个核心特点</strong></h3><ol>
+<li><strong>业务导向</strong>：关注“业务需要什么数据”，而非“数据库如何存储”</li>
+<li><strong>技术无关</strong>：不使用SQL、不定义字段类型，只描述实体和关系</li>
+<li><strong>可视化表达</strong>：常用<strong>ER图</strong>（实体关系图）呈现</li>
+</ol>
+<hr>
+<h3 id="概念模型的4个核心元素"><a href="#概念模型的4个核心元素" class="headerlink" title="概念模型的4个核心元素"></a><strong>概念模型的4个核心元素</strong></h3><table>
+<thead>
+<tr>
+<th align="left">元素</th>
+<th align="left">说明</th>
+<th align="left">示例（图书馆系统）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>实体</strong></td>
+<td align="left">独立存在的事物</td>
+<td align="left">读者、图书、管理员</td>
+</tr>
+<tr>
+<td align="left"><strong>属性</strong></td>
+<td align="left">实体的特征</td>
+<td align="left">读者的姓名、图书的ISBN号</td>
+</tr>
+<tr>
+<td align="left"><strong>关系</strong></td>
+<td align="left">实体间的交互</td>
+<td align="left">读者「借阅」图书</td>
+</tr>
+<tr>
+<td align="left"><strong>约束</strong></td>
+<td align="left">业务规则限制</td>
+<td align="left">一个读者最多同时借5本书</td>
+</tr>
+</tbody></table>
+<h2 id="ER数据模型"><a href="#ER数据模型" class="headerlink" title="ER数据模型"></a>ER数据模型</h2><h3 id="两种抽象手段"><a href="#两种抽象手段" class="headerlink" title="两种抽象手段"></a>两种抽象手段</h3><ul>
+<li><h4 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h4></li>
+<li><h4 id="聚集"><a href="#聚集" class="headerlink" title="聚集"></a>聚集</h4></li>
+</ul>
+<h3 id="1-分类（Generalization-Specialization）"><a href="#1-分类（Generalization-Specialization）" class="headerlink" title="1. 分类（Generalization&#x2F;Specialization）"></a><strong>1. 分类（Generalization&#x2F;Specialization）</strong></h3><h4 id="一句话总结：把事物从「大类别」细化到「小类别」，或者反过来合并同类项。"><a href="#一句话总结：把事物从「大类别」细化到「小类别」，或者反过来合并同类项。" class="headerlink" title="一句话总结：把事物从「大类别」细化到「小类别」，或者反过来合并同类项。"></a><strong>一句话总结</strong>：把事物从「大类别」细化到「小类别」，或者反过来合并同类项。</h4><h4 id="类比生活："><a href="#类比生活：" class="headerlink" title="类比生活："></a><strong>类比生活</strong>：</h4><ul>
+<li><strong>分类</strong>就像整理衣柜：<ul>
+<li><strong>大类别（Generalization）</strong>：把「T恤、毛衣、外套」统一归类为「上衣」。</li>
+<li><strong>小类别（Specialization）</strong>：把「上衣」细分成「长袖T恤、短袖T恤、卫衣」。</li>
+</ul>
+</li>
+</ul>
+<h4 id="数据库中怎么用："><a href="#数据库中怎么用：" class="headerlink" title="数据库中怎么用："></a><strong>数据库中怎么用</strong>：</h4><ul>
+<li><strong>向上抽象（Generalization）</strong>：把多个实体类型的<strong>共同属性</strong>提取成一个更高层的实体。<ul>
+<li>比如：学生和老师都有「姓名、年龄」，可以抽象出一个「人」实体，学生和老师继承自「人」。</li>
+</ul>
+</li>
+<li><strong>向下细化（Specialization）</strong>：根据某些特性，将一个实体拆分成多个子类型。<ul>
+<li>比如：把「用户」拆分为「普通用户」和「VIP用户」，VIP用户额外有「会员等级」属性。</li>
+</ul>
+</li>
+</ul>
+<h4 id="举个栗子🌰："><a href="#举个栗子🌰：" class="headerlink" title="举个栗子🌰："></a><strong>举个栗子</strong>🌰：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">动物（Animal）</span><br><span class="line">├─ 属性：名字、年龄</span><br><span class="line">│</span><br><span class="line">├─ 鸟类（Bird）</span><br><span class="line">│  └─ 属性：翅膀长度</span><br><span class="line">│</span><br><span class="line">└─ 鱼类（Fish）</span><br><span class="line">   └─ 属性：鳍的类型</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>分类</strong>的优点是：减少重复属性，逻辑清晰，方便扩展新类型。</li>
+</ul>
+<hr>
+<h3 id="2-聚集（Aggregation）"><a href="#2-聚集（Aggregation）" class="headerlink" title="2. 聚集（Aggregation）"></a><strong>2. 聚集（Aggregation）</strong></h3><h4 id="一句话总结：把多个实体和它们的关系「打包」成一个更高级的实体，像乐高积木组合。"><a href="#一句话总结：把多个实体和它们的关系「打包」成一个更高级的实体，像乐高积木组合。" class="headerlink" title="一句话总结：把多个实体和它们的关系「打包」成一个更高级的实体，像乐高积木组合。"></a><strong>一句话总结</strong>：把多个实体和它们的关系「打包」成一个更高级的实体，像乐高积木组合。</h4><h4 id="类比生活：-1"><a href="#类比生活：-1" class="headerlink" title="类比生活："></a><strong>类比生活</strong>：</h4><ul>
+<li>比如组装电脑：<ul>
+<li>单独的「CPU、内存、硬盘」是零件（实体），通过「组装」（关系）形成一个「电脑主机」（聚集实体）。</li>
+</ul>
+</li>
+</ul>
+<h4 id="数据库中怎么用：-1"><a href="#数据库中怎么用：-1" class="headerlink" title="数据库中怎么用："></a><strong>数据库中怎么用</strong>：</h4><ul>
+<li>当一个<strong>关系本身需要被当作实体处理</strong>时，就用聚集。<ul>
+<li>比如：学生选课的关系（学生-课程）本身可能有属性「选课时间」，此时可以将「学生+课程+选课时间」打包成一个「选课记录」实体。</li>
+</ul>
+</li>
+</ul>
+<h4 id="举个栗子🌰：-1"><a href="#举个栗子🌰：-1" class="headerlink" title="举个栗子🌰："></a><strong>举个栗子</strong>🌰：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">订单（Order） </span><br><span class="line">└─ 包含（Contains）</span><br><span class="line">   ├─ 商品（Product）</span><br><span class="line">   └─ 属性：购买数量、单价</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这里「订单」和「商品」通过「包含」关系组合，形成「订单项」（聚集实体），方便统计总价。</li>
+</ul>
+<hr>
+<h3 id="两者的核心区别"><a href="#两者的核心区别" class="headerlink" title="两者的核心区别"></a><strong>两者的核心区别</strong></h3><table>
+<thead>
+<tr>
+<th align="left"><strong>分类</strong></th>
+<th align="left"><strong>聚集</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">处理<strong>层级关系</strong>（父子类）</td>
+<td align="left">处理<strong>组合关系</strong>（整体与部分）</td>
+</tr>
+<tr>
+<td align="left">纵向抽象（上下层）</td>
+<td align="left">横向抽象（平级合并）</td>
+</tr>
+<tr>
+<td align="left">目的是继承属性和行为</td>
+<td align="left">目的是简化复杂关系的操作</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a><strong>应用场景</strong></h3><ul>
+<li><strong>用分类</strong>：当需要区分「VIP用户和普通用户」，或者统一管理「员工、学生、老师」的共同属性。</li>
+<li><strong>用聚集</strong>：当需要把「订单+商品+购买数量」当作一个整体处理，或者统计「项目+参与员工+工时」。</li>
+</ul>
+<hr>
+<p><strong>总结</strong>：分类是「上下级划分」，聚集是「打包组合」。就像整理房间时，分类是把衣服按季节归类，聚集是把床、床头柜、台灯组合成「睡眠区」！</p>
+<h2 id="三个基本元素"><a href="#三个基本元素" class="headerlink" title="三个基本元素"></a>三个基本元素</h2><ul>
+<li><p>实体</p>
+</li>
+<li><p>属性</p>
+</li>
+<li><p>联系</p>
+</li>
+<li><p>一个实体可以由若干个属性来刻画</p>
+</li>
+<li><p>属性类型相同的实体属于一个实体集</p>
+</li>
+</ul>
+<p><strong>简单属性</strong> &amp;&amp; <strong>复合属性</strong>：属性能否再分 （街道&#x3D;家庭住址+门牌号</p>
+<p><img src="https://s2.loli.net/2025/03/07/NhMp35aF7OTezdq.png" alt="image.png"></p>
+<p><strong>单值属性</strong> &amp;&amp; <strong>多值属性</strong> ：某个实体能否有多个取值（一个人可以有多个电话号码</p>
+<h2 id="键-key"><a href="#键-key" class="headerlink" title="键 key"></a>键 key</h2><ul>
+<li>实体集中能唯一标识某个实体的属性</li>
+<li>多个属性构成键 -&gt; 复合键</li>
+</ul>
+<h2 id="联系"><a href="#联系" class="headerlink" title="联系"></a>联系</h2><ul>
+<li>由一系列实体之间的对应关系组成</li>
+</ul>
+<p><img src="https://s2.loli.net/2025/03/07/yAJOGhLTDp5KNYu.png" alt="image.png"></p>
+<ul>
+<li>可以包含非键属性</li>
+</ul>
+<p><img src="https://s2.loli.net/2025/03/07/QEMeAJqSvk5s23O.png" alt="image.png"></p>
+<h2 id="图形化的方法——ER图"><a href="#图形化的方法——ER图" class="headerlink" title="图形化的方法——ER图"></a>图形化的方法——ER图</h2><p>圈⭕ -&gt; 属性</p>
+<p>方形 -&gt; 实体</p>
+<p>菱形 -&gt; 联系</p>
+<h2 id="联系的元——参与联系的实体的个数"><a href="#联系的元——参与联系的实体的个数" class="headerlink" title="联系的元——参与联系的实体的个数"></a>联系的元——参与联系的实体的个数</h2><h2 id="基数比约束"><a href="#基数比约束" class="headerlink" title="基数比约束"></a>基数比约束</h2><ul>
+<li>表示一个实体能通过联系关联到的另一个实体集中的实体的数量</li>
+<li>二元联系的两个实体集实际上属于同一个实体集的两个副本 -&gt; 一元联系</li>
+</ul>
+<img src="https://s2.loli.net/2025/03/07/S4jyYMHuN9LrBOh.png" alt="image.png" style="zoom:67%;" />
+
+<img src="https://s2.loli.net/2025/03/07/wL4shxqlbaMO9PF.png" alt="image.png" style="zoom:50%;" />
+
+<img src="https://s2.loli.net/2025/03/07/VsybnpwltXESFgh.png" alt="image.png" style="zoom: 50%;" />
+
+<h1 id="约束"><a href="#约束" class="headerlink" title="约束"></a>约束</h1><ul>
+<li>约束是 对数据库 的 断言</li>
+<li>断言内容： 对 数据 进行 限定</li>
+<li>约束 是 数据库模式的 重要组成 部分 <ul>
+<li>非空约束 唯一值约束 主键约束 外键约束 check约束</li>
+</ul>
+</li>
+</ul>
+<h2 id="键约束"><a href="#键约束" class="headerlink" title="键约束"></a>键约束</h2><ul>
+<li><p>引用实体</p>
+</li>
+<li><h2 id="超键-super-key"><a href="#超键-super-key" class="headerlink" title="超键 super key"></a>超键 <code>super key</code></h2><ul>
+<li>一个或一组属性 —— 唯一确定实体</li>
+</ul>
+</li>
+<li><h2 id="候选键-candidate-key"><a href="#候选键-candidate-key" class="headerlink" title="候选键 candidate key"></a>候选键 <code>candidate key</code></h2><ul>
+<li>某个超键的最小集</li>
+</ul>
+</li>
+<li><h2 id="主键-primary-key"><a href="#主键-primary-key" class="headerlink" title="主键 primary key"></a>主键 <code>primary key</code></h2><ul>
+<li>任一个候选键</li>
+</ul>
+</li>
+</ul>
+<p>e.g.</p>
+<p>超键：（学号 身份证 年龄） （学号 性别 班级）</p>
+<p>候选键： （学号） （身份证）</p>
+<p>主键： （学号）</p>
+<h1 id="ER建模准则"><a href="#ER建模准则" class="headerlink" title="ER建模准则"></a>ER建模准则</h1><ol>
+<li>忠实于用户需求</li>
+<li><code>KISS</code>原则 (keep it simple and stupid)</li>
+<li>避免冗余</li>
+<li>能抽象为属性的，就不要抽象为实体</li>
+</ol>
+<ul>
+<li>厂家需要分配多的存储空间</li>
+<li>进行数据修改的时候需要考虑数据一致性</li>
+</ul>
+<p><img src="https://s2.loli.net/2025/03/07/W4leEYiVSFKMkGr.png" alt="image.png"></p>
+<h2 id="实体-or-属性"><a href="#实体-or-属性" class="headerlink" title="实体 or 属性"></a>实体 or 属性</h2><p>满足以下条件之一，则必须抽象成实体</p>
+<ol>
+<li>含有 非 键 属性</li>
+<li>事务处于“一对多” “多对多” 中多的那一端</li>
+</ol>
+<p>否则，尽量抽象为属性</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://GGGengXXX.github.io">ggengx</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://gggengxxx.github.io/2025/03/07/note-db-01/">http://gggengxxx.github.io/2025/03/07/note-db-01/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/note-db/">note-db</a></div><div class="post-share"><div class="social-share" data-image="/img/maomao.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/03/05/tailwind-install/" title="tailwind-install"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2">tailwind-install</div></div><div class="info-2"><div class="info-item-1">import tailwind into your vue project 首先，进入工程目录，终端中执行  1npm install tailwindcss @tailwindcss/vite   编辑 vite.config.js  1234567891011121314import &#123; defineConfig &#125; from &#x27;vite&#x27;import vue from &#x27;@vitejs/plugin-vue&#x27;// modifyimport tailwindcss from &#x27;@tailwindcss/vite&#x27;// https://vite.dev/config/export default defineConfig(&#123;  plugins: [    vue(),      // modify    tailwindcss()  ],&#125;)   新建 src/styles/index.css 将来 html 将把 css 导入到这个 文件中 编辑文件 如下 (原先的 三行 ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/03/03/note-db-00/" title="note-db-00概述"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-03</div><div class="info-item-2">note-db-00概述</div></div><div class="info-2"><div class="info-item-1">数据库系统特点 数据结构化 数据共享 同一部分数据为多用户共享 文件系统    数据库系统      数据独立性 物理独立性 修改物理存储模式不影响 上层应用程序   逻辑数据独立性 修改逻辑模式 不影响 上层应用程序     方便的用户接口 统一的数据管理与控制功能 完整性 正确，有效，相容 指和现实世界实际情况相符 不能出现xxx年龄3000岁     安全性 主动安全 有效防止数据被 非法访问 或者 非法修改   被动安全 数据被破坏后能 恢复     并发控制 多个用户能够同时 存取，修改 数据      数据库结构模式结构（用户角度）模式（schema）    姓名 性别 年龄 学号          用户使用数据库： 按照模式描述的结构，在模式 的 实例中存取数据 逻辑抽象：三级模式结构   外模式 也称为用户模式，为不同 用户群体 提供定制化的数据试图   概念模式 数据库的...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/maomao.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">ggengx</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">16</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/GGGengXXX"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is ggem Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.</span> <span class="toc-text">数据模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%8E%B0%E5%AE%9E%E4%B8%96%E7%95%8C%EF%BC%88%E4%BA%BA%E7%B1%BB%E8%A7%86%E8%A7%92%EF%BC%89"><span class="toc-number">1.0.1.</span> <span class="toc-text">1. 现实世界（人类视角）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%A6%82%E5%BF%B5%E6%A8%A1%E5%9E%8B%EF%BC%88%E4%BA%BA%E7%B1%BB%E6%80%9D%E7%BB%B4%E6%8A%BD%E8%B1%A1%EF%BC%89"><span class="toc-number">1.0.2.</span> <span class="toc-text">2. 概念模型（人类思维抽象）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%80%BB%E8%BE%91%E6%A8%A1%E5%9E%8B%EF%BC%88%E6%8A%80%E6%9C%AF%E8%A7%86%E8%A7%92%E6%8A%BD%E8%B1%A1%EF%BC%89"><span class="toc-number">1.0.3.</span> <span class="toc-text">3. 逻辑模型（技术视角抽象）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%89%A9%E7%90%86%E6%A8%A1%E5%9E%8B%EF%BC%88%E6%9C%BA%E5%99%A8%E4%BC%98%E5%8C%96%E8%A7%86%E8%A7%92%EF%BC%89"><span class="toc-number">1.0.4.</span> <span class="toc-text">4. 物理模型（机器优化视角）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%96%E7%95%8C%EF%BC%88%E6%9C%BA%E5%99%A8%E8%AF%AD%E8%A8%80%EF%BC%89"><span class="toc-number">1.0.5.</span> <span class="toc-text">5. 计算机世界（机器语言）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BA%BA%E7%B1%BB%E7%90%86%E8%A7%A3%E8%83%BD%E5%8A%9B%E5%87%8F%E5%BC%B1%EF%BC%9F"><span class="toc-number">1.0.6.</span> <span class="toc-text">为什么人类理解能力减弱？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E6%AF%94%EF%BC%9A%E5%BB%BA%E9%80%A0%E6%88%BF%E5%B1%8B"><span class="toc-number">1.0.7.</span> <span class="toc-text">类比：建造房屋</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">概念模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5%E6%A8%A1%E5%9E%8B%E7%9A%843%E4%B8%AA%E6%A0%B8%E5%BF%83%E7%89%B9%E7%82%B9"><span class="toc-number">2.0.1.</span> <span class="toc-text">概念模型的3个核心特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5%E6%A8%A1%E5%9E%8B%E7%9A%844%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%85%83%E7%B4%A0"><span class="toc-number">2.0.2.</span> <span class="toc-text">概念模型的4个核心元素</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ER%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.1.</span> <span class="toc-text">ER数据模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%A4%E7%A7%8D%E6%8A%BD%E8%B1%A1%E6%89%8B%E6%AE%B5"><span class="toc-number">2.1.1.</span> <span class="toc-text">两种抽象手段</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E7%B1%BB"><span class="toc-number">2.1.1.1.</span> <span class="toc-text">分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%81%9A%E9%9B%86"><span class="toc-number">2.1.1.2.</span> <span class="toc-text">聚集</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%88%86%E7%B1%BB%EF%BC%88Generalization-Specialization%EF%BC%89"><span class="toc-number">2.1.2.</span> <span class="toc-text">1. 分类（Generalization&#x2F;Specialization）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93%EF%BC%9A%E6%8A%8A%E4%BA%8B%E7%89%A9%E4%BB%8E%E3%80%8C%E5%A4%A7%E7%B1%BB%E5%88%AB%E3%80%8D%E7%BB%86%E5%8C%96%E5%88%B0%E3%80%8C%E5%B0%8F%E7%B1%BB%E5%88%AB%E3%80%8D%EF%BC%8C%E6%88%96%E8%80%85%E5%8F%8D%E8%BF%87%E6%9D%A5%E5%90%88%E5%B9%B6%E5%90%8C%E7%B1%BB%E9%A1%B9%E3%80%82"><span class="toc-number">2.1.2.1.</span> <span class="toc-text">一句话总结：把事物从「大类别」细化到「小类别」，或者反过来合并同类项。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B1%BB%E6%AF%94%E7%94%9F%E6%B4%BB%EF%BC%9A"><span class="toc-number">2.1.2.2.</span> <span class="toc-text">类比生活：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E6%80%8E%E4%B9%88%E7%94%A8%EF%BC%9A"><span class="toc-number">2.1.2.3.</span> <span class="toc-text">数据库中怎么用：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BE%E4%B8%AA%E6%A0%97%E5%AD%90%F0%9F%8C%B0%EF%BC%9A"><span class="toc-number">2.1.2.4.</span> <span class="toc-text">举个栗子🌰：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%81%9A%E9%9B%86%EF%BC%88Aggregation%EF%BC%89"><span class="toc-number">2.1.3.</span> <span class="toc-text">2. 聚集（Aggregation）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93%EF%BC%9A%E6%8A%8A%E5%A4%9A%E4%B8%AA%E5%AE%9E%E4%BD%93%E5%92%8C%E5%AE%83%E4%BB%AC%E7%9A%84%E5%85%B3%E7%B3%BB%E3%80%8C%E6%89%93%E5%8C%85%E3%80%8D%E6%88%90%E4%B8%80%E4%B8%AA%E6%9B%B4%E9%AB%98%E7%BA%A7%E7%9A%84%E5%AE%9E%E4%BD%93%EF%BC%8C%E5%83%8F%E4%B9%90%E9%AB%98%E7%A7%AF%E6%9C%A8%E7%BB%84%E5%90%88%E3%80%82"><span class="toc-number">2.1.3.1.</span> <span class="toc-text">一句话总结：把多个实体和它们的关系「打包」成一个更高级的实体，像乐高积木组合。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B1%BB%E6%AF%94%E7%94%9F%E6%B4%BB%EF%BC%9A-1"><span class="toc-number">2.1.3.2.</span> <span class="toc-text">类比生活：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E6%80%8E%E4%B9%88%E7%94%A8%EF%BC%9A-1"><span class="toc-number">2.1.3.3.</span> <span class="toc-text">数据库中怎么用：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BE%E4%B8%AA%E6%A0%97%E5%AD%90%F0%9F%8C%B0%EF%BC%9A-1"><span class="toc-number">2.1.3.4.</span> <span class="toc-text">举个栗子🌰：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%A4%E8%80%85%E7%9A%84%E6%A0%B8%E5%BF%83%E5%8C%BA%E5%88%AB"><span class="toc-number">2.1.4.</span> <span class="toc-text">两者的核心区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">2.1.5.</span> <span class="toc-text">应用场景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E4%B8%AA%E5%9F%BA%E6%9C%AC%E5%85%83%E7%B4%A0"><span class="toc-number">2.2.</span> <span class="toc-text">三个基本元素</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%AE-key"><span class="toc-number">2.3.</span> <span class="toc-text">键 key</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%81%94%E7%B3%BB"><span class="toc-number">2.4.</span> <span class="toc-text">联系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BE%E5%BD%A2%E5%8C%96%E7%9A%84%E6%96%B9%E6%B3%95%E2%80%94%E2%80%94ER%E5%9B%BE"><span class="toc-number">2.5.</span> <span class="toc-text">图形化的方法——ER图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%81%94%E7%B3%BB%E7%9A%84%E5%85%83%E2%80%94%E2%80%94%E5%8F%82%E4%B8%8E%E8%81%94%E7%B3%BB%E7%9A%84%E5%AE%9E%E4%BD%93%E7%9A%84%E4%B8%AA%E6%95%B0"><span class="toc-number">2.6.</span> <span class="toc-text">联系的元——参与联系的实体的个数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%95%B0%E6%AF%94%E7%BA%A6%E6%9D%9F"><span class="toc-number">2.7.</span> <span class="toc-text">基数比约束</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F"><span class="toc-number">3.</span> <span class="toc-text">约束</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%AE%E7%BA%A6%E6%9D%9F"><span class="toc-number">3.1.</span> <span class="toc-text">键约束</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B6%85%E9%94%AE-super-key"><span class="toc-number">3.2.</span> <span class="toc-text">超键 super key</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%80%99%E9%80%89%E9%94%AE-candidate-key"><span class="toc-number">3.3.</span> <span class="toc-text">候选键 candidate key</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E9%94%AE-primary-key"><span class="toc-number">3.4.</span> <span class="toc-text">主键 primary key</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ER%E5%BB%BA%E6%A8%A1%E5%87%86%E5%88%99"><span class="toc-number">4.</span> <span class="toc-text">ER建模准则</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BD%93-or-%E5%B1%9E%E6%80%A7"><span class="toc-number">4.1.</span> <span class="toc-text">实体 or 属性</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/07/note-db-01/" title="note-db-01">note-db-01</a><time datetime="2025-03-07T06:48:12.000Z" title="Created 2025-03-07 14:48:12">2025-03-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/05/tailwind-install/" title="tailwind-install">tailwind-install</a><time datetime="2025-03-05T14:52:14.000Z" title="Created 2025-03-05 22:52:14">2025-03-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/04/CQ-note-0x4-%E7%BC%96%E8%BE%91%E5%91%98%E5%B7%A5/" title="CQ-note-0x4-编辑员工">CQ-note-0x4-编辑员工</a><time datetime="2025-03-04T13:40:03.000Z" title="Created 2025-03-04 21:40:03">2025-03-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/04/CQ-note-0x3-%E5%90%AF%E7%94%A8%E7%A6%81%E7%94%A8%E5%91%98%E5%B7%A5%E8%B4%A6%E5%8F%B7/" title="CQ-note-0x3-启用禁用员工账号">CQ-note-0x3-启用禁用员工账号</a><time datetime="2025-03-04T12:47:04.000Z" title="Created 2025-03-04 20:47:04">2025-03-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/04/linux-note-tmux/" title="linux-note-tmux">linux-note-tmux</a><time datetime="2025-03-04T11:43:31.000Z" title="Created 2025-03-04 19:43:31">2025-03-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By ggengx</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.3</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
