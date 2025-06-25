@@ -1,0 +1,758 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>learn-note-目标检测 | GGGengXXX</title><meta name="author" content="ggengx"><meta name="copyright" content="ggengx"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="-  -  computer vision tasks 的 basis 实例分割 图像描述生成 目标跟踪 具体应用   autonomous driving robot vision video surveillance  two historical periods  traditional object period (before 2014) deep learning based dete">
+<meta property="og:type" content="article">
+<meta property="og:title" content="learn-note-目标检测">
+<meta property="og:url" content="http://gggengxxx.github.io/2025/03/10/learn-note-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/index.html">
+<meta property="og:site_name" content="GGGengXXX">
+<meta property="og:description" content="-  -  computer vision tasks 的 basis 实例分割 图像描述生成 目标跟踪 具体应用   autonomous driving robot vision video surveillance  two historical periods  traditional object period (before 2014) deep learning based dete">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://gggengxxx.github.io/img/maomao.jpg">
+<meta property="article:published_time" content="2025-03-10T06:08:23.000Z">
+<meta property="article:modified_time" content="2025-03-20T09:20:12.427Z">
+<meta property="article:author" content="ggengx">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://gggengxxx.github.io/img/maomao.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "learn-note-目标检测",
+  "url": "http://gggengxxx.github.io/2025/03/10/learn-note-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/",
+  "image": "http://gggengxxx.github.io/img/maomao.jpg",
+  "datePublished": "2025-03-10T06:08:23.000Z",
+  "dateModified": "2025-03-20T09:20:12.427Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "ggengx",
+      "url": "http://gggengxxx.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://gggengxxx.github.io/2025/03/10/learn-note-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'learn-note-目标检测',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">GGGengXXX</span></a><a class="nav-page-title" href="/"><span class="site-name">learn-note-目标检测</span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">learn-note-目标检测</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-03-10T06:08:23.000Z" title="Created 2025-03-10 14:08:23">2025-03-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-03-20T09:20:12.427Z" title="Updated 2025-03-20 17:20:12">2025-03-20</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>- </p>
+<p>- </p>
+<p>computer vision tasks 的 basis 实例分割 图像描述生成 目标跟踪</p>
+<p>具体应用 </p>
+<ul>
+<li>autonomous driving</li>
+<li>robot vision</li>
+<li>video surveillance</li>
+</ul>
+<p>two historical periods</p>
+<ul>
+<li>traditional object period (before 2014)</li>
+<li>deep learning based detection period(after 2014)</li>
+</ul>
+<p><img src="https://s2.loli.net/2025/03/10/VXJlGZiRwTFcuMz.png" alt="image.png"></p>
+<h3 id="1-Multi-resolution-Detection（多分辨率检测）"><a href="#1-Multi-resolution-Detection（多分辨率检测）" class="headerlink" title="1. Multi-resolution Detection（多分辨率检测）"></a><strong>1. Multi-resolution Detection（多分辨率检测）</strong></h3><p><strong>定义：</strong><br>Multi-resolution detection 是一种目标检测方法，通过在不同分辨率下进行检测来提高算法<br>的准确性和鲁棒性。</p>
+<p><strong>特点：</strong></p>
+<ul>
+<li>在图像的不同尺度上进行检测，能够更好地捕捉到物体的多样性。</li>
+<li>适用于处理大小差异较大的目标（如小物体和大物体）。</li>
+<li>常用于提升模型在复杂场景中的性能。</li>
+</ul>
+<p><strong>作用：</strong><br>通过多分辨率特征提取和分类，可以更有效地检测不同尺寸的目标，减少漏检和误检的情况。</p>
+<hr>
+<h3 id="2-Hard-negative-Mining（难例挖掘）"><a href="#2-Hard-negative-Mining（难例挖掘）" class="headerlink" title="2. Hard-negative Mining（难例挖掘）"></a><strong>2. Hard-negative Mining（难例挖掘）</strong></h3><p><strong>定义：</strong><br>Hard-negative mining 是一种数据增强技术，在目标检测任务中用于选择最难分类的样本进行<br>训练。</p>
+<p><strong>原理：</strong></p>
+<ul>
+<li>在训练过程中，模型通常会优先学习容易分类的样本。</li>
+<li>通过“hard-negative mining”，可以主动选择那些模型预测错误或置信度较低的难例样本<br>（false positives），并将其加入训练数据。</li>
+<li>这种方法可以帮助模型减少类别偏差（class bias），从而提高检测性能。</li>
+</ul>
+<p><strong>作用：</strong></p>
+<ol>
+<li>减少模型对简单样本的过拟合，增强其泛化能力。</li>
+<li>提高模型在复杂场景中的表现，尤其是在目标数量较少或背景干扰较大的情况下。</li>
+</ol>
+<hr>
+<h2 id="tradition-detectors"><a href="#tradition-detectors" class="headerlink" title="tradition detectors"></a>tradition detectors</h2><p><strong>Viola Jones Detectors: 2001</strong></p>
+<ul>
+<li><p>无约束（肤色分割）人脸检测</p>
+</li>
+<li><p>三种重要技术：积分图像、特征选择、检测级联</p>
+</li>
+<li><h3 id="术语解释："><a href="#术语解释：" class="headerlink" title="术语解释："></a><strong>术语解释：</strong></h3><ol>
+<li><p><strong>Integral Image（积分图像）</strong><br>积分图像是用于快速计算图像子区域的像素和的一种数据结构，极大地提高了目标检测的速度。</p>
+</li>
+<li><p><strong>Feature Selection（特征选择）</strong><br>通过从 <code>Haar</code> 特征中选择最优特征，减少计算量并提高检测效率。</p>
+</li>
+<li><p><strong>Detection Cascades（检测级联）</strong><br>级联检测器是一种多阶段的检测方法，通过逐步筛选出不可能包含目标的区域，从而快速排除大量背景像素，提升检测速度。</p>
+</li>
+</ol>
+</li>
+</ul>
+<p>HOG Detector:  2005</p>
+<ul>
+<li>霍夫梯度方向直方图，一种用于描述图像中局部特征的算法。</li>
+<li>多种物体，针对行人</li>
+<li>对输入图像进行多次缩放，同时保持检测窗口大小不变</li>
+</ul>
+<p><strong>Deformable Part-based Model (DPM)</strong></p>
+<ul>
+<li><p>Pascal Visual Object Classes (VOC) 检测竞赛，是计算机视觉领域的重要 benchmark。</p>
+</li>
+<li><p><strong>“分而治之”（Divide and Conquer）</strong><br>DPM将目标分解为多个部件分别检测，再通过概率模型进行整体推断。</p>
+</li>
+<li><p><strong>星型模型（Star-Model）</strong><br>一种经典的DPM结构，基于中心对称的形状模型。</p>
+</li>
+<li><p><strong>混合模型（Mixture Models）</strong><br>R. Girshick提出的改进方法，能更好地处理现实场景中的目标形变和多样性。</p>
+</li>
+<li><p>变形部件基模型是一种基于目标形状的图像分割方法，它结合了统计建模与几何先验知识。</p>
+</li>
+<li><p>For example,the problem of detecting a “car” can be decomposed to thedetection of its window, body, and wheels. This part of the work, a.k.a. “star-model”, was introduced by P. Felzenszwalbet al.</p>
+</li>
+</ul>
+<h2 id="CNN-based-Two-stage-Detectors"><a href="#CNN-based-Two-stage-Detectors" class="headerlink" title="CNN based Two-stage Detectors"></a>CNN based Two-stage Detectors</h2><p>R. Girshick et al. took the lead to break the deadlocks in  2014 by proposing the Regions with CNN features (RCNN).</p>
+<p><strong>two groups of detectors</strong></p>
+<ul>
+<li>two-stage detectors</li>
+<li>one-stage detectors</li>
+</ul>
+<p><strong>RCNN</strong></p>
+<p>通过选择性搜索提取一组目标候选框</p>
+<p>然后将每个候选框缩放为固定大小的图像，并输入到一个在ImageNet上预训练好的CNN模型（例如AlexNet）中提取特征</p>
+<p>最后，使用线性SVM分类器对每个区域内的目标存在性进行预测，并识别目标类别。</p>
+<ul>
+<li>精度提升</li>
+<li>对大量 重叠候选框 重复特征计算</li>
+</ul>
+<p><strong>SPPNet</strong></p>
+<ul>
+<li>将原始特征图划分为多个区域（例如4个、9个或16个区域）。</li>
+<li>对每个区域内的特征进行最大池化（max-pooling），从而捕获不同尺度的目标信息。</li>
+<li>最终将所有区域的池化结果拼接在一起，形成一个固定大小的特征向量。</li>
+</ul>
+<p>这种设计使得模型能够自动适应目标在图像中出现的不同位置和尺度，而无需像RCNN那样对每个候选框进行单独缩放和计算。从而大幅降低了重复计算的开销。</p>
+<ul>
+<li>pros: both speed  and accuracy</li>
+<li>cons: <ul>
+<li>multi-stage </li>
+<li>only fine-tunes its fully connected layers while ignoring all pervious layers.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Fast RCNN</strong></p>
+<ul>
+<li>同时训练检测器和边界框回归器</li>
+</ul>
+<p><strong>Faster RCNN</strong></p>
+<ul>
+<li><strong>mAP（平均精度均值）</strong><br>衡量目标检测算法性能的关键指标，数值越高表明检测效果越好。</li>
+<li><strong>RPN（区域提议网络）</strong><br>Faster RCNN的核心创新之一，用于生成高质量候选框，显著降低了计算成本。</li>
+<li><strong>端到端学习框架</strong><br>将目标检测系统的各个模块整合为一个统一的深度学习模型，提升了整体性能和效率。</li>
+</ul>
+<p><strong>Feature Pyramid Networks (FPN)</strong></p>
+<ul>
+<li>Before FPN 仅在网络顶层特征图上 <strong>运行检测</strong></li>
+<li>However CNN中较深层的特征对类别识别非常有益</li>
+<li>在FPN中开发了一种自顶向下的架构 横向连接构建所有尺度的高级语义</li>
+</ul>
+<h2 id="CNN-based-One-stage-Detectors"><a href="#CNN-based-One-stage-Detectors" class="headerlink" title="CNN based One-stage Detectors"></a>CNN based One-stage Detectors</h2><p> <strong>You Only Look Once</strong> (YOLO)</p>
+<ul>
+<li>first one-stage detector</li>
+<li>extremely fast</li>
+<li>a drop of localization accuracy  定位精度下降</li>
+</ul>
+<p><strong>Single Shot MultiBox Detector(SSD)</strong></p>
+<ul>
+<li>accuracy  up</li>
+<li>detects objects of different scale on diffrent layers of network<ul>
+<li>previous ones run on top layers</li>
+</ul>
+</li>
+<li>多参考和多分辨率检测技术(不同角度 + 不同放大倍数)</li>
+</ul>
+<p><strong>RetinaNet</strong></p>
+<ul>
+<li><p>extreme foreground-background class imbalance</p>
+</li>
+<li><p>new loss function -&gt; focal loss</p>
+</li>
+<li><p>focus on hard, misclassified examples</p>
+</li>
+</ul>
+<p><strong>CornerNet</strong></p>
+<ul>
+<li><p>previous: </p>
+<ul>
+<li>anchor boxes</li>
+<li>suffer from further category imbalance, hand-designed hyper-parameters, long convergence time</li>
+</ul>
+</li>
+<li><p>keypoint( corners of a box ) prediction problem</p>
+</li>
+</ul>
+<p><strong>CenterNet</strong></p>
+<ul>
+<li>将一个对象视为单个点（即物体的中心）并根据参考中心点回归所有属性（如大小、方向、位置、姿态等）</li>
+<li>模型简洁优雅，可以将3-D目标检测、人体姿势估计、光流学习、深度估计和其他任务集成到一个统一框架中</li>
+</ul>
+<p><strong>DETR</strong></p>
+<ul>
+<li>discard the traditional convolution operator </li>
+<li>global-scale receptive field</li>
+</ul>
+<h2 id="Dataset-and-Metrics"><a href="#Dataset-and-Metrics" class="headerlink" title="Dataset   and Metrics"></a>Dataset   and Metrics</h2><p><strong>dataset</strong></p>
+<ul>
+<li>Pascal VOC, ILSVRC, MS-COCO, Open Images</li>
+</ul>
+<p><strong>Metrics</strong></p>
+<p><strong>AP</strong></p>
+<ul>
+<li>AP is defined as the average detection precision under different recalls</li>
+</ul>
+<p><strong>mAP</strong></p>
+<ul>
+<li>mean AP </li>
+<li>final metric of performance</li>
+</ul>
+<p><strong>IoU</strong></p>
+<ul>
+<li>交集和并集的比值</li>
+</ul>
+<h2 id="Technical-Evolution"><a href="#Technical-Evolution" class="headerlink" title="Technical Evolution"></a>Technical Evolution</h2><p><strong>multi scale</strong></p>
+<p><strong>Feature pyramids + sliding window</strong></p>
+<ul>
+<li>different aspect ratios</li>
+<li>类比<ul>
+<li>超市监控找小偷，可以放大货架看，也可以全局看；摄像头自动扫描每一排货架</li>
+</ul>
+</li>
+</ul>
+<p><strong>Detection with object proposals</strong></p>
+<ul>
+<li>目标建议框</li>
+<li>避免整个图像 全面滑动窗口</li>
+</ul>
+<p>**Deep regression and anchor-free detection  **</p>
+<ul>
+<li>深度学习直接预测边界框的坐标</li>
+</ul>
+<p><strong>Multi -reference &#x2F; -resolution detection</strong></p>
+<ul>
+<li>结合 高 &#x2F; 低 分辨率 综合判断</li>
+</ul>
+<p><strong>Context Priming</strong> 上下文预训练技术发展</p>
+<p><strong>Local context</strong></p>
+<ul>
+<li>visual information in the area that surrounds the object to detect  </li>
+<li>局部上下文区域</li>
+</ul>
+<p><strong>global context</strong></p>
+<ul>
+<li>早期：统计手段 纳入构成场景元素的统计摘要</li>
+<li>现代：深度学习技术 注意力机制 and 循环神经网络</li>
+</ul>
+<p><strong>context interactive</strong></p>
+<ul>
+<li>constraints and dependencies that conveys between visual elements  视觉元素之间的 <strong>约束和依赖</strong> 关系</li>
+<li><ol>
+<li>个体对象之间</li>
+<li>对象与场景之间的依赖</li>
+</ol>
+</li>
+</ul>
+<p><strong>Hard Negative Mining</strong> 困难负样本挖掘</p>
+<blockquote>
+<p>背景占比 比 目标大得多 </p>
+</blockquote>
+<p><strong>Bootstrap</strong></p>
+<p>最初从少量的背景样本开始训练模型，然后逐步将新的误分类样本添加到训练集中</p>
+<p>**Technical Evolution of Loss Function:  ** </p>
+<p>在物体检测任务中，<strong>损失函数（Loss Function）</strong> 用于衡量模型预测结果与真实标签之间的差距。通过计算损失，模型可以获取梯度信息，并利用**反向传播（Backpropagation）**来更新权重，从而逐步优化性能。</p>
+<p>物体检测的监督信号主要由两部分组成：</p>
+<ol>
+<li><strong>分类损失（Classification Loss）</strong>——衡量模型在正确分类目标（如“猫”、“车”）方面的准确性。</li>
+<li><strong>定位损失（Localization Loss）</strong>——衡量模型预测的目标边界框（Bounding Box）与真实边界框之间的偏差。</li>
+</ol>
+<p>随着技术的发展，损失函数也在不断演进。例如：</p>
+<ul>
+<li>传统的<strong>交叉熵损失（Cross Entropy Loss）</strong> 主要用于分类任务，但对难分类的样本关注不足。</li>
+<li><strong>Focal Loss</strong> 通过减少易分类样本的权重，使模型更专注于困难样本，从而提升检测器性能。</li>
+<li><strong>IoU-based Losses</strong>（如 GIoU、DIoU、CIoU）优化了边界框回归，使预测框更贴合目标</li>
+</ul>
+<p><strong>NMS 的核心作用</strong></p>
+<p>想象你在人群中找人，目标检测模型会先输出一堆可能框住人的方框（比如10个框），但这些框很多是重复的（比如同一人被框了5次）。<strong>NMS 的任务就是剔除重复框，只保留最准的一个</strong>，类似“去重+选最优”。</p>
+<h3 id="NMS-的核心作用"><a href="#NMS-的核心作用" class="headerlink" title="NMS 的核心作用"></a><strong>NMS 的核心作用</strong></h3><p>想象你在人群中找人，目标检测模型会先输出一堆可能框住人的方框（比如10个框），但这些框很多是重复的（比如同一人被框了5次）。<strong>NMS 的任务就是剔除重复框，只保留最准的一个</strong>，类似“去重+选最优”。</p>
+<hr>
+<h3 id="NMS-的技术演进阶段"><a href="#NMS-的技术演进阶段" class="headerlink" title="NMS 的技术演进阶段"></a><strong>NMS 的技术演进阶段</strong></h3><h4 id="1-原始阶段：没有NMS的混乱时代"><a href="#1-原始阶段：没有NMS的混乱时代" class="headerlink" title="1. 原始阶段：没有NMS的混乱时代"></a><strong>1. 原始阶段：没有NMS的混乱时代</strong></h4><ul>
+<li><strong>早期目标检测</strong>（如2000年代初）：模型输出大量重叠框，但当时连“最终输出应该是什么样”都不明确，直接输出所有框，结果杂乱。</li>
+<li><strong>问题</strong>：像撒网捕鱼，捞到太多重复的鱼，分不清哪条是真正的目标。</li>
+</ul>
+<hr>
+<h4 id="2-贪婪选择（Greedy-NMS）——-经典但粗糙"><a href="#2-贪婪选择（Greedy-NMS）——-经典但粗糙" class="headerlink" title="2. 贪婪选择（Greedy NMS）—— 经典但粗糙"></a><strong>2. 贪婪选择（Greedy NMS）—— 经典但粗糙</strong></h4><ul>
+<li><strong>原理</strong>：简单粗暴的“优胜劣汰”<ol>
+<li>按置信度（得分）从高到低排序所有框；</li>
+<li>选中最高分的框，删除所有和它重叠度超过阈值（如50%）的框；</li>
+<li>重复步骤2，直到处理完所有框。</li>
+</ol>
+</li>
+<li><strong>优点</strong>：计算快，容易实现。</li>
+<li><strong>缺点</strong>：<ul>
+<li><strong>误杀邻近物体</strong>：若两个物体离得很近（比如手牵手的两个人），高分框会抑制旁边的正确框（见图1）。</li>
+<li><strong>依赖阈值</strong>：阈值设高了漏检，设低了误检。</li>
+<li><strong>不处理假阳性</strong>：低分错误框可能残留。</li>
+</ul>
+</li>
+</ul>
+<p><strong>生活例子</strong>：老师选班干部，只看成绩第一名，其他和第一名关系好的同学（哪怕能力不错）全被淘汰。</p>
+<hr>
+<h4 id="3-边界框聚合（BB-Aggregation）——-民主投票"><a href="#3-边界框聚合（BB-Aggregation）——-民主投票" class="headerlink" title="3. 边界框聚合（BB Aggregation）—— 民主投票"></a><strong>3. 边界框聚合（BB Aggregation）—— 民主投票</strong></h4><ul>
+<li><strong>原理</strong>：不直接删除，而是把重叠框的信息融合（比如取位置平均值或加权平均）。</li>
+<li><strong>代表方法</strong>：<ul>
+<li>VJ检测器（早期人脸检测）</li>
+<li>Overfeat（ILSVRC-13冠军）</li>
+</ul>
+</li>
+<li><strong>优点</strong>：考虑多个框的信息，减少误删。</li>
+<li><strong>缺点</strong>：计算复杂，融合策略影响效果。</li>
+</ul>
+<p><strong>生活例子</strong>：全班同学投票决定班干部，综合多人意见，而非只听第一名。</p>
+<hr>
+<h4 id="4-基于学习的NMS（Learning-based-NMS）——-让AI自己学"><a href="#4-基于学习的NMS（Learning-based-NMS）——-让AI自己学" class="headerlink" title="4. 基于学习的NMS（Learning-based NMS）—— 让AI自己学"></a><strong>4. 基于学习的NMS（Learning-based NMS）—— 让AI自己学</strong></h4><ul>
+<li><strong>原理</strong>：用神经网络替代人工规则，直接学习“哪些框该留，哪些该删”。<ul>
+<li><strong>方式1</strong>：将NMS作为网络的一部分，端到端训练（如RelationNet）。</li>
+<li><strong>方式2</strong>：训练一个网络模仿传统NMS的行为，但更智能。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：<ul>
+<li>处理遮挡和密集物体更好（比如人群密集时，传统NMS容易漏检）。</li>
+<li>可自适应不同场景，减少人工调参。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：训练复杂，计算成本高。</li>
+</ul>
+<p><strong>生活例子</strong>：让AI学习资深HR的招聘逻辑，自动筛选简历，而不是机械地按学历排序。</p>
+<hr>
+<h4 id="5-无NMS检测器（NMS-free）——-终极理想"><a href="#5-无NMS检测器（NMS-free）——-终极理想" class="headerlink" title="5. 无NMS检测器（NMS-free）—— 终极理想"></a><strong>5. 无NMS检测器（NMS-free）—— 终极理想</strong></h4><ul>
+<li><strong>原理</strong>：彻底抛弃NMS，让模型直接输出“一对一”的预测（一个物体对应一个框）。<ul>
+<li><strong>关键</strong>：通过标签分配策略（如每个物体只匹配一个预测框），强制模型学习不重复输出。</li>
+<li><strong>代表方法</strong>：DETR（Transformer检测器）、OneNet。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：<ul>
+<li>完全端到端，无需后处理。</li>
+<li>更接近人类视觉（人眼不会对同一物体产生多个感知框）。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：训练难度大，小物体检测效果待提升。</li>
+</ul>
+<p><strong>生活例子</strong>：考试时直接写出唯一正确答案，而不是先写10个答案再划掉9个。</p>
+<hr>
+<h3 id="总结对比表"><a href="#总结对比表" class="headerlink" title="总结对比表"></a><strong>总结对比表</strong></h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">核心思想</th>
+<th align="left">优点</th>
+<th align="left">缺点</th>
+<th align="left">适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>贪婪NMS</strong></td>
+<td align="left">留最高分，删重叠</td>
+<td align="left">简单高效</td>
+<td align="left">误删邻近物体，依赖阈值</td>
+<td align="left">通用场景，实时检测</td>
+</tr>
+<tr>
+<td align="left"><strong>边界框聚合</strong></td>
+<td align="left">融合重叠框信息</td>
+<td align="left">减少误删</td>
+<td align="left">计算复杂，策略难优化</td>
+<td align="left">早期人脸&#x2F;物体检测</td>
+</tr>
+<tr>
+<td align="left"><strong>基于学习的NMS</strong></td>
+<td align="left">神经网络智能筛选</td>
+<td align="left">处理遮挡&#x2F;密集更优</td>
+<td align="left">训练复杂，计算成本高</td>
+<td align="left">复杂场景（人群、交通）</td>
+</tr>
+<tr>
+<td align="left"><strong>无NMS检测器</strong></td>
+<td align="left">直接输出一对一预测</td>
+<td align="left">端到端，无需后处理</td>
+<td align="left">训练难，小物体效果差</td>
+<td align="left">研究前沿，长尾数据</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="技术演进的本质"><a href="#技术演进的本质" class="headerlink" title="技术演进的本质"></a><strong>技术演进的本质</strong></h3><p>从<strong>人工规则</strong>（贪婪NMS）→ <strong>统计融合</strong>（BB聚合）→ <strong>数据驱动</strong>（学习NMS）→ <strong>彻底颠覆规则</strong>（无NMS），体现了一个趋势：<strong>让模型自己学习复杂决策，减少人为干预</strong>。</p>
+<hr>
+<h3 id="未来展望"><a href="#未来展望" class="headerlink" title="未来展望"></a><strong>未来展望</strong></h3><ul>
+<li><strong>无NMS检测器</strong>可能是最终方向，但需解决训练效率和中小物体检测问题。</li>
+<li><strong>混合策略</strong>：在复杂场景中，结合学习和规则方法（比如用学习NMS处理遮挡，用贪婪NMS做快速初筛）。</li>
+</ul>
+<h3 id="目标检测加速的「三层境界」"><a href="#目标检测加速的「三层境界」" class="headerlink" title="目标检测加速的「三层境界」"></a><strong>目标检测加速的「三层境界」</strong></h3><p>想象你要在一条高速公路上优化车流速度，目标检测加速也分三个层面：<strong>整体道路设计</strong>（流程优化）、<strong>车辆性能</strong>（主干网络轻量化）、<strong>引擎技术</strong>（数值计算加速）。</p>
+<hr>
+<h4 id="第一层：优化「检测流程」——-精简流水线"><a href="#第一层：优化「检测流程」——-精简流水线" class="headerlink" title="第一层：优化「检测流程」—— 精简流水线"></a><strong>第一层：优化「检测流程」—— 精简流水线</strong></h4><ul>
+<li><strong>核心思想</strong>：减少不必要的步骤，合并重复环节。</li>
+<li><strong>常见方法</strong>：<ol>
+<li><strong>单阶段检测器</strong>（如YOLO、SSD）：把“找区域+分类”两步合并成一步。</li>
+<li><strong>特征共享</strong>：避免重复计算（例如Faster R-CNN中RPN和检测头共享特征图）。</li>
+<li><strong>提前终止</strong>：对低概率区域提前停止计算（比如只处理高分区域）。</li>
+</ol>
+</li>
+<li><strong>生活例子</strong>：<ul>
+<li><strong>传统流程</strong>：快递分拣要经过“扫描→分区域→装车”多步骤（类似两阶段检测）。</li>
+<li><strong>优化后</strong>：用智能分拣机一次性完成扫描和分区（类似单阶段检测）。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="第二层：轻量化「主干网络」——-瘦身模型"><a href="#第二层：轻量化「主干网络」——-瘦身模型" class="headerlink" title="第二层：轻量化「主干网络」—— 瘦身模型"></a><strong>第二层：轻量化「主干网络」—— 瘦身模型</strong></h4><ul>
+<li><strong>核心思想</strong>：用更小、更快的神经网络替换笨重的结构。</li>
+<li><strong>常见方法</strong>：<ol>
+<li><strong>轻量级网络设计</strong>：MobileNet、ShuffleNet（用深度可分离卷积减少计算量）。</li>
+<li><strong>模型压缩</strong>：<ul>
+<li><strong>剪枝</strong>：删除不重要的神经元（像修剪树枝）。</li>
+<li><strong>蒸馏</strong>：让小模型模仿大模型的行为（学生跟老师学）。</li>
+</ul>
+</li>
+<li><strong>参数共享</strong>：同一层内复用权重（如Group Convolution）。</li>
+</ol>
+</li>
+<li><strong>生活例子</strong>：<ul>
+<li><strong>原始模型</strong>：笨重的卡车（如VGG16）载货多但速度慢。</li>
+<li><strong>轻量化后</strong>：换成电动小货车（如MobileNet），载货量稍减但灵活高效。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="第三层：加速「数值计算」——-榨干硬件性能"><a href="#第三层：加速「数值计算」——-榨干硬件性能" class="headerlink" title="第三层：加速「数值计算」—— 榨干硬件性能"></a><strong>第三层：加速「数值计算」—— 榨干硬件性能</strong></h4><ul>
+<li><strong>核心思想</strong>：通过算法和硬件协同优化，提升计算效率。</li>
+<li><strong>常见方法</strong>：<ol>
+<li><strong>硬件加速</strong>：利用GPU&#x2F;TPU并行计算，或专用芯片（如NPU）。</li>
+<li><strong>低精度计算</strong>：用FP16（半精度）甚至INT8（整型）代替FP32（单精度浮点）。</li>
+<li><strong>算法优化</strong>：<ul>
+<li><strong>快速矩阵乘法</strong>（如Winograd算法）。</li>
+<li><strong>内存优化</strong>：减少数据读写次数（类似CPU缓存机制）。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><strong>生活例子</strong>：<ul>
+<li><strong>传统计算</strong>：手工记账，速度慢易出错（CPU串行计算）。</li>
+<li><strong>加速后</strong>：用Excel公式自动计算（GPU并行+低精度）。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="三类加速技术的对比表"><a href="#三类加速技术的对比表" class="headerlink" title="三类加速技术的对比表"></a><strong>三类加速技术的对比表</strong></h3><table>
+<thead>
+<tr>
+<th align="left">加速层次</th>
+<th align="left">核心方法</th>
+<th align="left">代表技术&#x2F;模型</th>
+<th align="left">优点</th>
+<th align="left">缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>检测流程优化</strong></td>
+<td align="left">减少步骤、合并计算</td>
+<td align="left">YOLO、SSD</td>
+<td align="left">大幅减少计算量</td>
+<td align="left">可能牺牲部分精度</td>
+</tr>
+<tr>
+<td align="left"><strong>主干网络轻量化</strong></td>
+<td align="left">设计小模型、压缩参数</td>
+<td align="left">MobileNet、模型剪枝</td>
+<td align="left">保持实时性，适配移动端</td>
+<td align="left">小模型容量有限</td>
+</tr>
+<tr>
+<td align="left"><strong>数值计算加速</strong></td>
+<td align="left">硬件+算法协同优化</td>
+<td align="left">TensorRT低精度推理</td>
+<td align="left">极致压榨硬件性能</td>
+<td align="left">依赖专用硬件&#x2F;库</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="实际应用场景"><a href="#实际应用场景" class="headerlink" title="实际应用场景"></a><strong>实际应用场景</strong></h3><ol>
+<li><strong>实时视频分析</strong>（如监控摄像头）：<ul>
+<li>优先选择<strong>单阶段检测器（YOLO）</strong> + <strong>轻量主干（MobileNet）</strong> + <strong>TensorRT加速</strong>。</li>
+</ul>
+</li>
+<li><strong>移动端APP</strong>（如手机拍照识物）：<ul>
+<li>使用<strong>蒸馏后的小模型</strong> + <strong>INT8量化</strong>。</li>
+</ul>
+</li>
+<li><strong>学术研究</strong>（追求精度）：<ul>
+<li>采用两阶段检测（Faster R-CNN） + 数值计算加速（混合精度训练）。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="一句话总结"><a href="#一句话总结" class="headerlink" title="一句话总结"></a><strong>一句话总结</strong></h3><p>目标检测加速是**「流程做减法、模型瘦身、硬件榨干」**的三重奏，最终在速度与精度间找到平衡。</p>
+<p>以下是关于目标检测中<strong>数值加速技术</strong>的通俗解释，结合生活案例帮助你理解这些底层优化的核心思想：</p>
+<hr>
+<h2 id="数值加速的本质"><a href="#数值加速的本质" class="headerlink" title="数值加速的本质"></a><strong>数值加速的本质</strong></h2><p>通过<strong>数学变换</strong>或<strong>预计算</strong>，将原本复杂的运算转化为更高效的形式，从而减少计算量。类似于用“查表法”代替重复计算，或用“快速公式”替代笨拙的逐项相加。</p>
+<hr>
+<h3 id="1-积分图像加速（Integral-Image）"><a href="#1-积分图像加速（Integral-Image）" class="headerlink" title="1. 积分图像加速（Integral Image）"></a><strong>1. 积分图像加速（Integral Image）</strong></h3><h4 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a><strong>核心思想</strong></h4><ul>
+<li><strong>提前算好区域总和</strong>：积分图像是一种预处理方法，将图像每个位置的像素值累积到该点左上方的总和存储起来。  </li>
+<li><strong>快速计算任意矩形区域的和</strong>：通过积分图像，计算任意矩形区域的像素和只需4次查表操作，复杂度从O(n²)降为O(1)。</li>
+</ul>
+<h4 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a><strong>实际应用</strong></h4><ul>
+<li><strong>HOG特征加速</strong>：在行人检测中，通过预计算梯度方向直方图的积分图（Integral HOG），快速提取滑动窗口的特征。  </li>
+<li><strong>颜色统计</strong>：快速计算图像子区域的平均颜色或颜色直方图。</li>
+</ul>
+<h4 id="生活例子"><a href="#生活例子" class="headerlink" title="生活例子"></a><strong>生活例子</strong></h4><p>想象你有一张全国人口分布图，积分图像相当于提前算好每个坐标点左上方的总人口。当需要查询“某省人口总数”时，直接通过四个角的积分值相减即可，无需逐个累加每个城市的数据。</p>
+<hr>
+<h3 id="2-频域加速（Frequency-Domain-Acceleration）"><a href="#2-频域加速（Frequency-Domain-Acceleration）" class="headerlink" title="2. 频域加速（Frequency Domain Acceleration）"></a><strong>2. 频域加速（Frequency Domain Acceleration）</strong></h3><h4 id="核心思想-1"><a href="#核心思想-1" class="headerlink" title="核心思想"></a><strong>核心思想</strong></h4><ul>
+<li><strong>傅里叶变换的魔力</strong>：将图像和卷积核转换到频域（傅里叶空间），在频域做逐点乘法，再逆变换回空间域。  </li>
+<li><strong>数学依据</strong>：时域卷积 &#x3D; 频域乘积（卷积定理）。</li>
+</ul>
+<h4 id="实际应用-1"><a href="#实际应用-1" class="headerlink" title="实际应用"></a><strong>实际应用</strong></h4><ul>
+<li><strong>快速卷积计算</strong>：传统卷积需逐点滑动计算，复杂度O(n²k²)；FFT加速后复杂度降为O(n² log n)。  </li>
+<li><strong>大规模滤波器应用</strong>：如边缘检测、模糊处理等。</li>
+</ul>
+<h4 id="生活例子-1"><a href="#生活例子-1" class="headerlink" title="生活例子"></a><strong>生活例子</strong></h4><p>计算两个大数相乘（如1234 × 5678），直接逐位相乘再相加非常耗时。但通过“快速乘法技巧”（类似FFT），将数转换为多项式形式相乘，再转换回来，速度更快。</p>
+<hr>
+<h3 id="3-矢量量化（Vector-Quantization-VQ）"><a href="#3-矢量量化（Vector-Quantization-VQ）" class="headerlink" title="3. 矢量量化（Vector Quantization, VQ）"></a><strong>3. 矢量量化（Vector Quantization, VQ）</strong></h3><h4 id="核心思想-2"><a href="#核心思想-2" class="headerlink" title="核心思想"></a><strong>核心思想</strong></h4><ul>
+<li><strong>数据压缩</strong>：用少量“代表向量”近似表示大量数据，减少计算和存储开销。  </li>
+<li><strong>加速内积运算</strong>：将高维特征映射到低维码本，通过查表加速相似度计算。</li>
+</ul>
+<h4 id="实际应用-2"><a href="#实际应用-2" class="headerlink" title="实际应用"></a><strong>实际应用</strong></h4><ul>
+<li><strong>特征压缩</strong>：在图像检索中，将高维SIFT特征映射到码本，加速相似图像匹配。  </li>
+<li><strong>分类器加速</strong>：将分类器的权重向量量化，减少内存占用和计算量。</li>
+</ul>
+<h4 id="生活例子-2"><a href="#生活例子-2" class="headerlink" title="生活例子"></a><strong>生活例子</strong></h4><p>调色板优化：一张图片有数百万种颜色，但通过矢量量化选出256种代表色，其他颜色用最近邻代替，既减少存储又保持视觉近似。</p>
+<hr>
+<h3 id="三种技术的对比总结"><a href="#三种技术的对比总结" class="headerlink" title="三种技术的对比总结"></a><strong>三种技术的对比总结</strong></h3><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>核心优化思路</th>
+<th>典型加速场景</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>积分图像</strong></td>
+<td>预计算区域和，查表代替计算</td>
+<td>滑动窗口特征提取</td>
+<td>实时性强，复杂度恒定</td>
+<td>内存占用高</td>
+</tr>
+<tr>
+<td><strong>频域加速</strong></td>
+<td>时域卷积 → 频域乘积</td>
+<td>大尺寸卷积核运算</td>
+<td>大幅降低计算复杂度</td>
+<td>需处理FFT尺寸对齐问题</td>
+</tr>
+<tr>
+<td><strong>矢量量化</strong></td>
+<td>用码本近似数据分布</td>
+<td>高维特征匹配&#x2F;分类</td>
+<td>减少存储和计算量</td>
+<td>引入近似误差</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="实际应用案例"><a href="#实际应用案例" class="headerlink" title="实际应用案例"></a><strong>实际应用案例</strong></h3><ol>
+<li><strong>实时人脸检测</strong>：  <ul>
+<li>使用积分图像加速Haar特征计算（如OpenCV的Viola-Jones算法）。</li>
+</ul>
+</li>
+<li><strong>医学图像处理</strong>：  <ul>
+<li>用FFT加速MRI图像的三维卷积滤波。</li>
+</ul>
+</li>
+<li><strong>移动端图像搜索</strong>：  <ul>
+<li>矢量量化压缩深度学习特征，实现低延迟检索。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="技术局限性"><a href="#技术局限性" class="headerlink" title="技术局限性"></a><strong>技术局限性</strong></h3><ul>
+<li><strong>积分图像</strong>：适合矩形区域统计，对不规则区域无效。  </li>
+<li><strong>频域加速</strong>：卷积核尺寸较大时优势明显，小核可能因FFT开销反而不划算。  </li>
+<li><strong>矢量量化</strong>：码本训练需要大量数据，且量化误差可能影响精度。</li>
+</ul>
+<hr>
+<h3 id="未来方向"><a href="#未来方向" class="headerlink" title="未来方向"></a><strong>未来方向</strong></h3><ul>
+<li><strong>混合加速</strong>：结合积分图像和频域方法处理多尺度特征。  </li>
+<li><strong>学习型量化</strong>：用神经网络自动生成最优码本（如深度量化网络）。</li>
+</ul>
+<p>通过理解这些底层加速技术，你可以在实际项目中针对性地优化检测器的性能，平衡速度与精度。</p>
+<h1 id="RECENT-ADVANCES-IN-OBJECT-DETECTION"><a href="#RECENT-ADVANCES-IN-OBJECT-DETECTION" class="headerlink" title="RECENT ADVANCES IN OBJECT DETECTION"></a>RECENT ADVANCES IN OBJECT DETECTION</h1><p><strong>A. 超越滑动窗口检测的方法</strong></p>
+<p>传统的目标检测方法常使用滑动窗口技术，即在图像上以不同大小的窗口逐一扫描，以检测目标。然而，这种方法计算量大，效率低下。为此，研究者提出了更高效的方法：</p>
+<ol>
+<li><strong>将目标检测视为关键点定位问题</strong>：一个物体可以通过其边界框的左上角和右下角来唯一确定。因此，检测任务可以等价地看作是定位这对关键点的问题。</li>
+<li><strong>预测关键点热图</strong>：一些方法通过预测这些关键点的热图来实现检测。</li>
+<li><strong>利用更多关键点</strong>：其他方法则引入更多的关键点，如角点和中心点、极值点和中心点、代表性点等，以提高检测性能。</li>
+<li><strong>将目标视为点并直接预测属性</strong>：另一种思路是将目标视为一个或多个点，直接预测其属性（如高度和宽度），无需进行分组。这种方法的优势在于可以在语义分割框架下实现，无需设计多尺度的锚框。</li>
+<li><strong>将检测任务视为集合预测</strong>：DETR模型完全解放了基于参考的框架，将目标检测视为集合预测问题。</li>
+</ol>
+<p><strong>B. 对旋转和尺度变化的鲁棒检测</strong></p>
+<p>在实际应用中，目标可能会出现旋转和尺度变化。为此，研究者提出了以下应对策略：</p>
+<ol>
+<li><strong>旋转鲁棒检测</strong>：<ul>
+<li><strong>数据增强</strong>：通过对训练数据进行旋转等变换，使模型能够适应不同方向的目标。</li>
+<li><strong>设计旋转不变的损失函数</strong>：添加约束，使得旋转后的目标特征保持不变。</li>
+<li><strong>学习几何变换</strong>：模型学习对象候选区域的几何变换，以适应旋转变化。</li>
+<li><strong>在极坐标系中进行ROI池化</strong>：在两阶段检测器中，ROI池化通常在笛卡尔坐标系中进行，对旋转不敏感。最近的改进是在极坐标系中进行ROI池化，使特征对旋转变化更具鲁棒性。</li>
+</ul>
+</li>
+<li><strong>尺度鲁棒检测</strong>：<ul>
+<li><strong>尺度自适应训练</strong>：现代检测器通常将输入图像重新缩放到固定大小，并对所有尺度的目标进行反向传播。这可能导致“尺度不平衡”问题。为缓解这一问题，SNIP方法在训练和检测阶段构建图像金字塔，并仅对选定尺度的目标进行反向传播。</li>
+<li><strong>SNIPER策略</strong>：进一步的改进是SNIPER策略，即裁剪并重新缩放图像为一组子区域，以便从大批量训练中受益。</li>
+<li><strong>尺度自适应检测</strong>：在基于CNN的检测器中，锚框的大小和纵横比通常需要精心设计，但这些配置可能无法适应意外的尺度变化。为改进小目标的检测，一些“自适应放大”技术被提出，以自适应地将小目标放大。另一个改进是预测图像中目标的尺度分布，然后根据该分布自适应地重新缩放图像。</li>
+</ul>
+</li>
+</ol>
+<p><strong>C</strong> <strong>更好的骨干网络</strong></p>
+<p>在目标检测领域，模型的准确性和速度在很大程度上取决于所使用的特征提取网络（即骨干网络）。传统上，卷积神经网络（CNN）如ResNet、CSPNet和Hourglass等被广泛应用于此类任务。然而，近年来，Transformer架构在计算机视觉任务中展现出强大的特征提取能力，特别是在目标检测领域。</p>
+<p>根据近期研究，Transformer架构在COCO数据集上的目标检测任务中表现出色。例如，Swin Transformer作为骨干网络，与传统的CNN骨干网络（如ResNeXt-101）相比，在目标检测和图像分割任务中取得了更高的平均精度（AP）。具体而言，在参数数量相近的情况下，使用Transformer骨干网络的模型在目标检测任务中的AP提高了多达3.9个百分点，在分割任务中的AP提高了多达3.5个百分点。 </p>
+<p>此外，DEtection TRansformer（DETR）等模型的出现，进一步证明了Transformer在目标检测任务中的潜力。研究表明，使用相同的骨干网络（如ResNet-50、ResNet-101）时，基于Transformer的检测器与传统的Faster R-CNN等模型相比，平均精度（AP）提高了多达4.7个百分点。然而，值得注意的是，某些基于CNN的最新模型（如EfficientDet-D7）在某些情况下仍表现出更高的AP，这表明Transformer和CNN在目标检测任务中各有优势。 </p>
+<p>总体而言，随着Transformer架构在计算机视觉领域的不断发展，基于Transformer的模型在目标检测任务中展现出强大的性能，并有望在未来继续推动该领域的进步。</p>
+<p><strong>D. 提高定位精度的方法</strong></p>
+<p>在目标检测中，准确地定位目标的位置至关重要。为此，研究者提出了两类改进方法：</p>
+<ol>
+<li><strong>边界框精细化（Bounding Box Refinement）</strong>：这是通过对初始检测结果进行后处理，进一步提高定位精度的一种直观方法。具体而言，检测结果会被反复输入到边界框回归器中，直到预测结果收敛到正确的位置和大小。然而，有研究指出，这种方法不一定能保证定位精度的单调提升，过多次的精细化可能反而降低定位效果。</li>
+<li><strong>设计新的损失函数以提高定位精度</strong>：传统的目标定位通常被视为坐标回归问题，但这种方法存在一些缺陷。首先，回归损失与最终的定位评估标准（如交并比，IoU）不完全对应，特别是对于具有大纵横比的目标。其次，传统的边界框回归方法无法提供定位置信度，这在进行非极大值抑制时可能导致失败。为了解决这些问题，研究者设计了新的损失函数。例如，直接使用IoU作为定位损失，或在概率推断框架下改进定位方法，即预测边界框位置的概率分布，而不是直接预测坐标。</li>
+</ol>
+<p><strong>E. 结合分割损失的学习策略</strong></p>
+<p>目标检测和语义分割是计算机视觉中的两项基础任务。研究表明，通过引入语义分割损失，可以提升目标检测的性能。具体方法包括：</p>
+<ol>
+<li><strong>将分割网络作为特征提取器</strong>：一种简单的方法是将预先训练好的分割网络视为固定的特征提取器，并将其集成到检测器中作为辅助特征。这种方法实现简单，但可能增加额外的计算开销。</li>
+<li><strong>在检测器上添加分割分支并进行多任务训练</strong>：另一种方法是在原有检测器的基础上添加一个分割分支，并使用多任务损失函数（同时包含分割和检测损失）进行训练。这种方法的优势在于，推理阶段可以移除分割分支，不影响检测速度，但训练过程需要像素级的图像标注。</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://GGGengXXX.github.io">ggengx</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://gggengxxx.github.io/2025/03/10/learn-note-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/">http://gggengxxx.github.io/2025/03/10/learn-note-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/maomao.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/03/10/learn-note-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8BYOLO-0/" title="learn-note-目标检测YOLO 0"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2">learn-note-目标检测YOLO 0</div></div><div class="info-2"><div class="info-item-1">-  -  two stage  Faster-rcnn Mask-Rcnn 预选+选  one stage  Yolo 直接选 速度快，实时检测 效果稍差  指标分析 map指标  综合衡量 检测效果  IoU: intersection of unit -&gt; 交集和并集的比值 Ground truth: 真实的标注  在目标检测中，我们通常会用两项指标来评估检测器的表现：精确率 (precision) 和 召回率 (recall)。下面用通俗易懂的语言和具体例子详细解释这两个指标的计算方法。  1. 关键概念在进行目标检测时，我们通常需要区分以下几种情况：  真阳性（True Positive, TP）：检测器预测出了一个目标，并且这个预测与实际存在的目标（地面真实标注）匹配。 假阳性（False Positive, FP）：检测器预测出了一个目标，但这个预测与实际的目标没有匹配上（即误检）。 假阴性（False Negative, FN）：实际存在的目标被检测器漏掉了，没有被正确预测到。   2....</div></div></div></a><a class="pagination-related" href="/2025/03/10/os-note-%E5%86%85%E6%A0%B8%E7%BA%A7%E7%BA%BF%E7%A8%8B/" title="os-note-内核级线程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">os-note-内核级线程</div></div><div class="info-2"><div class="info-item-1">-  -  进程切换 —— 指令流 + 资源  指令流 —— 线程切换 资源 —— 内存管理  进程必须在内核中 —— 资源分配 —— 内核态 从两个栈到两套栈 具体例子：  执行 0x80  跳到 内核栈  记录下用户指令流中下一条PC地址(304)  记录段基址 (CS:100) 执行 sys_read() 自己阻塞了 —— 引起调度 找到 next switch_to(cur, next);  过程 执行中断指令，跳到内核栈中，在内核中阻塞，调度 切换，从 一套栈 切换到 另一套栈 根据 TCB using iret 中断返回 内核线程切换 switch_to 的 五段论  </div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/maomao.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">ggengx</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/GGGengXXX"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is ggem Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Multi-resolution-Detection%EF%BC%88%E5%A4%9A%E5%88%86%E8%BE%A8%E7%8E%87%E6%A3%80%E6%B5%8B%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">1. Multi-resolution Detection（多分辨率检测）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Hard-negative-Mining%EF%BC%88%E9%9A%BE%E4%BE%8B%E6%8C%96%E6%8E%98%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">2. Hard-negative Mining（难例挖掘）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tradition-detectors"><span class="toc-number"></span> <span class="toc-text">tradition detectors</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AF%E8%AF%AD%E8%A7%A3%E9%87%8A%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">术语解释：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CNN-based-Two-stage-Detectors"><span class="toc-number"></span> <span class="toc-text">CNN based Two-stage Detectors</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CNN-based-One-stage-Detectors"><span class="toc-number"></span> <span class="toc-text">CNN based One-stage Detectors</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dataset-and-Metrics"><span class="toc-number"></span> <span class="toc-text">Dataset   and Metrics</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Technical-Evolution"><span class="toc-number"></span> <span class="toc-text">Technical Evolution</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NMS-%E7%9A%84%E6%A0%B8%E5%BF%83%E4%BD%9C%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">NMS 的核心作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NMS-%E7%9A%84%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E9%98%B6%E6%AE%B5"><span class="toc-number">2.</span> <span class="toc-text">NMS 的技术演进阶段</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8E%9F%E5%A7%8B%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%B2%A1%E6%9C%89NMS%E7%9A%84%E6%B7%B7%E4%B9%B1%E6%97%B6%E4%BB%A3"><span class="toc-number">2.1.</span> <span class="toc-text">1. 原始阶段：没有NMS的混乱时代</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%B4%AA%E5%A9%AA%E9%80%89%E6%8B%A9%EF%BC%88Greedy-NMS%EF%BC%89%E2%80%94%E2%80%94-%E7%BB%8F%E5%85%B8%E4%BD%86%E7%B2%97%E7%B3%99"><span class="toc-number">2.2.</span> <span class="toc-text">2. 贪婪选择（Greedy NMS）—— 经典但粗糙</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E8%BE%B9%E7%95%8C%E6%A1%86%E8%81%9A%E5%90%88%EF%BC%88BB-Aggregation%EF%BC%89%E2%80%94%E2%80%94-%E6%B0%91%E4%B8%BB%E6%8A%95%E7%A5%A8"><span class="toc-number">2.3.</span> <span class="toc-text">3. 边界框聚合（BB Aggregation）—— 民主投票</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%9F%BA%E4%BA%8E%E5%AD%A6%E4%B9%A0%E7%9A%84NMS%EF%BC%88Learning-based-NMS%EF%BC%89%E2%80%94%E2%80%94-%E8%AE%A9AI%E8%87%AA%E5%B7%B1%E5%AD%A6"><span class="toc-number">2.4.</span> <span class="toc-text">4. 基于学习的NMS（Learning-based NMS）—— 让AI自己学</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E6%97%A0NMS%E6%A3%80%E6%B5%8B%E5%99%A8%EF%BC%88NMS-free%EF%BC%89%E2%80%94%E2%80%94-%E7%BB%88%E6%9E%81%E7%90%86%E6%83%B3"><span class="toc-number">2.5.</span> <span class="toc-text">5. 无NMS检测器（NMS-free）—— 终极理想</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E5%AF%B9%E6%AF%94%E8%A1%A8"><span class="toc-number">3.</span> <span class="toc-text">总结对比表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E7%9A%84%E6%9C%AC%E8%B4%A8"><span class="toc-number">4.</span> <span class="toc-text">技术演进的本质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%9D%A5%E5%B1%95%E6%9C%9B"><span class="toc-number">5.</span> <span class="toc-text">未来展望</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E5%8A%A0%E9%80%9F%E7%9A%84%E3%80%8C%E4%B8%89%E5%B1%82%E5%A2%83%E7%95%8C%E3%80%8D"><span class="toc-number">6.</span> <span class="toc-text">目标检测加速的「三层境界」</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%B1%82%EF%BC%9A%E4%BC%98%E5%8C%96%E3%80%8C%E6%A3%80%E6%B5%8B%E6%B5%81%E7%A8%8B%E3%80%8D%E2%80%94%E2%80%94-%E7%B2%BE%E7%AE%80%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="toc-number">6.1.</span> <span class="toc-text">第一层：优化「检测流程」—— 精简流水线</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%B1%82%EF%BC%9A%E8%BD%BB%E9%87%8F%E5%8C%96%E3%80%8C%E4%B8%BB%E5%B9%B2%E7%BD%91%E7%BB%9C%E3%80%8D%E2%80%94%E2%80%94-%E7%98%A6%E8%BA%AB%E6%A8%A1%E5%9E%8B"><span class="toc-number">6.2.</span> <span class="toc-text">第二层：轻量化「主干网络」—— 瘦身模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E5%B1%82%EF%BC%9A%E5%8A%A0%E9%80%9F%E3%80%8C%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E3%80%8D%E2%80%94%E2%80%94-%E6%A6%A8%E5%B9%B2%E7%A1%AC%E4%BB%B6%E6%80%A7%E8%83%BD"><span class="toc-number">6.3.</span> <span class="toc-text">第三层：加速「数值计算」—— 榨干硬件性能</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E7%B1%BB%E5%8A%A0%E9%80%9F%E6%8A%80%E6%9C%AF%E7%9A%84%E5%AF%B9%E6%AF%94%E8%A1%A8"><span class="toc-number">7.</span> <span class="toc-text">三类加速技术的对比表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">8.</span> <span class="toc-text">实际应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93"><span class="toc-number">9.</span> <span class="toc-text">一句话总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E5%80%BC%E5%8A%A0%E9%80%9F%E7%9A%84%E6%9C%AC%E8%B4%A8"><span class="toc-number"></span> <span class="toc-text">数值加速的本质</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%A7%AF%E5%88%86%E5%9B%BE%E5%83%8F%E5%8A%A0%E9%80%9F%EF%BC%88Integral-Image%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">1. 积分图像加速（Integral Image）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-number">1.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">实际应用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%9F%E6%B4%BB%E4%BE%8B%E5%AD%90"><span class="toc-number">1.3.</span> <span class="toc-text">生活例子</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%A2%91%E5%9F%9F%E5%8A%A0%E9%80%9F%EF%BC%88Frequency-Domain-Acceleration%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">2. 频域加速（Frequency Domain Acceleration）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-1"><span class="toc-number">2.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8-1"><span class="toc-number">2.2.</span> <span class="toc-text">实际应用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%9F%E6%B4%BB%E4%BE%8B%E5%AD%90-1"><span class="toc-number">2.3.</span> <span class="toc-text">生活例子</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%9F%A2%E9%87%8F%E9%87%8F%E5%8C%96%EF%BC%88Vector-Quantization-VQ%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">3. 矢量量化（Vector Quantization, VQ）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-2"><span class="toc-number">3.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8-2"><span class="toc-number">3.2.</span> <span class="toc-text">实际应用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%9F%E6%B4%BB%E4%BE%8B%E5%AD%90-2"><span class="toc-number">3.3.</span> <span class="toc-text">生活例子</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E6%8A%80%E6%9C%AF%E7%9A%84%E5%AF%B9%E6%AF%94%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">三种技术的对比总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="toc-number">5.</span> <span class="toc-text">实际应用案例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%80%E6%9C%AF%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">6.</span> <span class="toc-text">技术局限性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AA%E6%9D%A5%E6%96%B9%E5%90%91"><span class="toc-number">7.</span> <span class="toc-text">未来方向</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#RECENT-ADVANCES-IN-OBJECT-DETECTION"><span class="toc-number"></span> <span class="toc-text">RECENT ADVANCES IN OBJECT DETECTION</span></a></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/25/os-shell/" title="os_shell">os_shell</a><time datetime="2025-06-25T15:57:05.000Z" title="Created 2025-06-25 23:57:05">2025-06-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/21/os-lab2-pre/" title="os-lab2-pre">os-lab2-pre</a><time datetime="2025-03-21T01:18:43.000Z" title="Created 2025-03-21 09:18:43">2025-03-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/17/note-db-03/" title="note-db-03">note-db-03</a><time datetime="2025-03-17T09:19:26.000Z" title="Created 2025-03-17 17:19:26">2025-03-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/17/note-%E6%9D%8E%E5%AE%8F%E6%AF%85-ml-CNN/" title="note-李宏毅-ml-CNN">note-李宏毅-ml-CNN</a><time datetime="2025-03-17T00:18:48.000Z" title="Created 2025-03-17 08:18:48">2025-03-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/14/note-db-02/" title="note-db-02">note-db-02</a><time datetime="2025-03-14T01:54:20.000Z" title="Created 2025-03-14 09:54:20">2025-03-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By ggengx</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.3</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

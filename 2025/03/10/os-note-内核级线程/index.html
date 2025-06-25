@@ -1,0 +1,185 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>os-note-内核级线程 | GGGengXXX</title><meta name="author" content="ggengx"><meta name="copyright" content="ggengx"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="-  -  进程切换 —— 指令流 + 资源  指令流 —— 线程切换 资源 —— 内存管理  进程必须在内核中 —— 资源分配 —— 内核态 从两个栈到两套栈 具体例子：  执行 0x80  跳到 内核栈  记录下用户指令流中下一条PC地址(304)  记录段基址 (CS:100) 执行 sys_read() 自己阻塞了 —— 引起调度 找到 next switch_to(cur, next);">
+<meta property="og:type" content="article">
+<meta property="og:title" content="os-note-内核级线程">
+<meta property="og:url" content="http://gggengxxx.github.io/2025/03/10/os-note-%E5%86%85%E6%A0%B8%E7%BA%A7%E7%BA%BF%E7%A8%8B/index.html">
+<meta property="og:site_name" content="GGGengXXX">
+<meta property="og:description" content="-  -  进程切换 —— 指令流 + 资源  指令流 —— 线程切换 资源 —— 内存管理  进程必须在内核中 —— 资源分配 —— 内核态 从两个栈到两套栈 具体例子：  执行 0x80  跳到 内核栈  记录下用户指令流中下一条PC地址(304)  记录段基址 (CS:100) 执行 sys_read() 自己阻塞了 —— 引起调度 找到 next switch_to(cur, next);">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://gggengxxx.github.io/img/maomao.jpg">
+<meta property="article:published_time" content="2025-03-10T15:25:33.000Z">
+<meta property="article:modified_time" content="2025-03-10T16:29:00.461Z">
+<meta property="article:author" content="ggengx">
+<meta property="article:tag" content="note-os">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://gggengxxx.github.io/img/maomao.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "os-note-内核级线程",
+  "url": "http://gggengxxx.github.io/2025/03/10/os-note-%E5%86%85%E6%A0%B8%E7%BA%A7%E7%BA%BF%E7%A8%8B/",
+  "image": "http://gggengxxx.github.io/img/maomao.jpg",
+  "datePublished": "2025-03-10T15:25:33.000Z",
+  "dateModified": "2025-03-10T16:29:00.461Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "ggengx",
+      "url": "http://gggengxxx.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://gggengxxx.github.io/2025/03/10/os-note-%E5%86%85%E6%A0%B8%E7%BA%A7%E7%BA%BF%E7%A8%8B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'os-note-内核级线程',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">GGGengXXX</span></a><a class="nav-page-title" href="/"><span class="site-name">os-note-内核级线程</span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">os-note-内核级线程</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-03-10T15:25:33.000Z" title="Created 2025-03-10 23:25:33">2025-03-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-03-10T16:29:00.461Z" title="Updated 2025-03-11 00:29:00">2025-03-11</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>- </p>
+<p>- </p>
+<p><strong>进程切换 —— 指令流 + 资源</strong></p>
+<ul>
+<li>指令流 —— 线程切换</li>
+<li>资源 —— 内存管理</li>
+</ul>
+<p><strong>进程必须在内核中 —— 资源分配 —— 内核态</strong></p>
+<p>从两个栈到两套栈</p>
+<p>具体例子：</p>
+<p><img src="https://s2.loli.net/2025/03/11/Ust5oYuhIMcaO2n.png" alt="image.png"></p>
+<p>执行 <code>0x80</code>  跳到 <strong>内核栈</strong> </p>
+<p>记录下用户指令流中下一条PC地址(<code>304</code>) </p>
+<p>记录段基址 (<code>CS:100</code>)</p>
+<p>执行 <code>sys_read()</code> 自己阻塞了 —— 引起调度</p>
+<p>找到 <code>next</code> <code>switch_to(cur, next);</code></p>
+<p><img src="https://s2.loli.net/2025/03/11/8dgBM12vNLUO6Wu.png" alt="image.png"></p>
+<p><strong>过程</strong></p>
+<p>执行中断指令，跳到内核栈中，在内核中阻塞，调度</p>
+<p>切换，从 <strong>一套栈</strong> 切换到 <strong>另一套栈</strong> 根据 TCB</p>
+<p>using <code>iret</code> <strong>中断返回</strong></p>
+<p><strong>内核线程切换 switch_to 的 五段论</strong></p>
+<p><img src="C:\Users\Z1760\AppData\Roaming\Typora\typora-user-images\image-20250311002438399.png" alt="image-20250311002438399"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://GGGengXXX.github.io">ggengx</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://gggengxxx.github.io/2025/03/10/os-note-%E5%86%85%E6%A0%B8%E7%BA%A7%E7%BA%BF%E7%A8%8B/">http://gggengxxx.github.io/2025/03/10/os-note-%E5%86%85%E6%A0%B8%E7%BA%A7%E7%BA%BF%E7%A8%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/note-os/">note-os</a></div><div class="post-share"><div class="social-share" data-image="/img/maomao.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/03/10/learn-note-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/" title="learn-note-目标检测"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2">learn-note-目标检测</div></div><div class="info-2"><div class="info-item-1">-  -  computer vision tasks 的 basis 实例分割 图像描述生成 目标跟踪 具体应用   autonomous driving robot vision video surveillance  two historical periods  traditional object period (before 2014) deep learning based detection period(after 2014)   1. Multi-resolution Detection（多分辨率检测）定义：Multi-resolution detection 是一种目标检测方法，通过在不同分辨率下进行检测来提高算法的准确性和鲁棒性。 特点：  在图像的不同尺度上进行检测，能够更好地捕捉到物体的多样性。 适用于处理大小差异较大的目标（如小物体和大物体）。 常用于提升模型在复杂场景中的性能。  作用：通过多分辨率特征提取和分类，可以更有效地检测不同尺寸的目标，减少漏检和误检的情况。  2. Hard-negative...</div></div></div></a><a class="pagination-related" href="/2025/03/11/os-lab1-pre/" title="os-lab1-pre"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">os-lab1-pre</div></div><div class="info-2"><div class="info-item-1">Thinking 1.1objdump 命令常用参数    参数 含义    -d 反汇编可执行代码段   -j 指定要反汇编的段，(.text .data)   -M 控制反汇编的语法和显示格式- no-aliases 禁用指令别名 显示 addiu 而非 li- reg-names=numeric 以数字形式显示寄存器 $2 而非 $v0- arch=mips 显示指定架构   -S&#x2F;–source 混合显示源代码和汇编代码   运行 12gcc hello.c -o hello_x86objdump -DS hello_x86  输出 1hello_x86：     文件格式 elf64-x86-64  运行 12mips-linux-gnu-gcc hello.c -o hello_mipsmips-linux-gnu-objdump -DS hello_mips  输出 1hello_mips：     文件格式 elf32-tradbigmips    Thinking...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/03/09/os-note-%E7%94%A8%E6%88%B7%E7%BA%A7%E7%BA%BF%E7%A8%8B/" title="os-note-用户级线程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-09</div><div class="info-item-2">os-note-用户级线程</div></div><div class="info-2"><div class="info-item-1">-  -  考虑两个线程 共用一个栈 函数调用时，将下一条指令地址压栈，然后跳转到函数调用的地方 Thread 1 12345678910100:A()&#123;    B();    104:&#125;200:B()&#123;    yield();    204:&#125;  Thread 2 12345678910300:C()&#123;	D();	304:&#125;400:D()&#123;	yield();	404:&#125;  使用一个栈： 执行到第一个 yield() 时，栈如下    地址 esp指针    104    204 *   跳到 Thread 2 中的 C() 继续执行至 yield() 栈如下    地址 esp指针    104    204    304    404 *   此时执行到 B() 的 &#125; 时 需要跳到栈顶的位置，然后 esp 指针上移 但是 此时栈顶的位置时 404 而不是我们期望的 104 因此 对于每一个线程分配一个 TCB，在切换线程时记录当前 stack...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/maomao.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">ggengx</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/GGGengXXX"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is ggem Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/25/os-shell/" title="os_shell">os_shell</a><time datetime="2025-06-25T15:57:05.000Z" title="Created 2025-06-25 23:57:05">2025-06-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/21/os-lab2-pre/" title="os-lab2-pre">os-lab2-pre</a><time datetime="2025-03-21T01:18:43.000Z" title="Created 2025-03-21 09:18:43">2025-03-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/17/note-db-03/" title="note-db-03">note-db-03</a><time datetime="2025-03-17T09:19:26.000Z" title="Created 2025-03-17 17:19:26">2025-03-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/17/note-%E6%9D%8E%E5%AE%8F%E6%AF%85-ml-CNN/" title="note-李宏毅-ml-CNN">note-李宏毅-ml-CNN</a><time datetime="2025-03-17T00:18:48.000Z" title="Created 2025-03-17 08:18:48">2025-03-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/14/note-db-02/" title="note-db-02">note-db-02</a><time datetime="2025-03-14T01:54:20.000Z" title="Created 2025-03-14 09:54:20">2025-03-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By ggengx</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.3</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

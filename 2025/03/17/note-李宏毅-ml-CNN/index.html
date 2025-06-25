@@ -1,0 +1,199 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>note-李宏毅-ml-CNN | GGGengXXX</title><meta name="author" content="ggengx"><meta name="copyright" content="ggengx"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="-  -   观察1 检测 pattern  基于 鸟嘴 鸟眼等 pattern 判断 图片中有 鸟   简化1 设置 感受野 每一个 neuron 仅关注某个 感受野   观察2 同样的 pattern 出现在图片的不同位置 每一个不同位置的 pattern 都需要一个 neuron 去做一样的事情吗   简化2 检测同样 pattern 的 neuron 共享参数      观察3 减去奇数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="note-李宏毅-ml-CNN">
+<meta property="og:url" content="http://gggengxxx.github.io/2025/03/17/note-%E6%9D%8E%E5%AE%8F%E6%AF%85-ml-CNN/index.html">
+<meta property="og:site_name" content="GGGengXXX">
+<meta property="og:description" content="-  -   观察1 检测 pattern  基于 鸟嘴 鸟眼等 pattern 判断 图片中有 鸟   简化1 设置 感受野 每一个 neuron 仅关注某个 感受野   观察2 同样的 pattern 出现在图片的不同位置 每一个不同位置的 pattern 都需要一个 neuron 去做一样的事情吗   简化2 检测同样 pattern 的 neuron 共享参数      观察3 减去奇数">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://gggengxxx.github.io/img/maomao.jpg">
+<meta property="article:published_time" content="2025-03-17T00:18:48.000Z">
+<meta property="article:modified_time" content="2025-03-17T01:21:59.254Z">
+<meta property="article:author" content="ggengx">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://gggengxxx.github.io/img/maomao.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "note-李宏毅-ml-CNN",
+  "url": "http://gggengxxx.github.io/2025/03/17/note-%E6%9D%8E%E5%AE%8F%E6%AF%85-ml-CNN/",
+  "image": "http://gggengxxx.github.io/img/maomao.jpg",
+  "datePublished": "2025-03-17T00:18:48.000Z",
+  "dateModified": "2025-03-17T01:21:59.254Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "ggengx",
+      "url": "http://gggengxxx.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://gggengxxx.github.io/2025/03/17/note-%E6%9D%8E%E5%AE%8F%E6%AF%85-ml-CNN/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'note-李宏毅-ml-CNN',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">GGGengXXX</span></a><a class="nav-page-title" href="/"><span class="site-name">note-李宏毅-ml-CNN</span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">note-李宏毅-ml-CNN</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-03-17T00:18:48.000Z" title="Created 2025-03-17 08:18:48">2025-03-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-03-17T01:21:59.254Z" title="Updated 2025-03-17 09:21:59">2025-03-17</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>- </p>
+<p>- </p>
+<ul>
+<li>观察1<ul>
+<li>检测 <code>pattern</code> </li>
+<li>基于 鸟嘴 鸟眼等 <code>pattern</code> 判断 图片中有 <strong>鸟</strong></li>
+</ul>
+</li>
+<li>简化1<ul>
+<li>设置 感受野</li>
+<li>每一个 neuron 仅关注某个 感受野</li>
+</ul>
+</li>
+<li>观察2<ul>
+<li>同样的 <code>pattern</code> 出现在图片的不同位置</li>
+<li>每一个不同位置的 <code>pattern</code> 都需要一个 <code>neuron</code> 去做一样的事情吗</li>
+</ul>
+</li>
+<li>简化2<ul>
+<li>检测同样 <code>pattern</code> 的 <code>neuron</code> 共享参数</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://s2.loli.net/2025/03/17/giox5FT9KQfM1CN.png" alt="image.png"></p>
+<ul>
+<li>观察3<ul>
+<li>减去奇数 &#x2F; 偶数 行，图像看起来不变</li>
+</ul>
+</li>
+<li>简化3<ul>
+<li>pooling 池化</li>
+<li>减少运算量</li>
+<li>带来 信息的丢失</li>
+</ul>
+</li>
+</ul>
+<p>不能处理影像 scaling rotation </p>
+<p>需要 data augmentation</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://GGGengXXX.github.io">ggengx</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://gggengxxx.github.io/2025/03/17/note-%E6%9D%8E%E5%AE%8F%E6%AF%85-ml-CNN/">http://gggengxxx.github.io/2025/03/17/note-%E6%9D%8E%E5%AE%8F%E6%AF%85-ml-CNN/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/maomao.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/03/14/note-db-02/" title="note-db-02"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2">note-db-02</div></div><div class="info-2"><div class="info-item-1">-  -  关系数据结构 关系存放两类信息：实体本身 实体之间联系  关系性质 不出现相同元组 元组的顺序，属性顺序 无关紧要 （行可以交换，列可以交换 同一个 属性名下的属性值 必须来自于同一个域 属性必须有不同名字 属性值是原子的，不可“表中有表”，展示一张 错表     ER模型 向 关系模型转化 1:N 一对多 向多端合并    1:1 合并 与常用实体合并 （经常查询    关系完整性域完整性 属性值 取值范围 增强数据类型 为年龄设置 &lt;= 150 的域完整性约束   对属性值是否为空(NULL) 的检查也是 域完整性约束 的一部分  实体完整性 实体完整性用 主键 来约束 主属性（构成主键的属性） 主属性不能为空 主属性取值唯一    参照完整性 关系 与 关系间的引用 Foreign key...</div></div></div></a><a class="pagination-related" href="/2025/03/17/note-db-03/" title="note-db-03"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">note-db-03</div></div><div class="info-2"><div class="info-item-1">-  -  什么是代数  运算对象 用于按照规则生成新的值的变量 或 值   运算符 表示 从旧值生成新值 的过程    关系代数  对关系的查询语言：以 对关系的运算表达查询 以 关系 为运算对象 操作符： 数据库中我们对于关系最常做的操作 运算结果： 也是关系 三要素 运算对象： 关系 运算结果： 关系 运算符： 四类    运算符  集合运算符  关系 -&gt; 元组的集合 交集，并集，差集 操作对象是同样属性的表   笛卡尔积 学生表  $\times $ 课程表     专门的关系运算符  涉及 行 和 列  选择 (σ) 作用：从表中筛选满足特定条件的行。 例子：假设我们希望找出成绩大于 60 分的学生。 表达式可以写作： σ（成绩 &gt; 60）（学生表） 结果：仅返回成绩大于 60 分的学生那几行。 投影 (π) 作用：从表中选择指定的列。 例子：如果只需要学生的姓名和成绩而不关心其他信息，可以写作： π（姓名, 成绩）（学生表） 结果：只显示姓名和成绩两列。 连接 (⨝) 作用：把两个表中有相关联字段的行合并起来。...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/maomao.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">ggengx</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/GGGengXXX"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is ggem Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/25/os-shell/" title="os_shell">os_shell</a><time datetime="2025-06-25T15:57:05.000Z" title="Created 2025-06-25 23:57:05">2025-06-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/21/os-lab2-pre/" title="os-lab2-pre">os-lab2-pre</a><time datetime="2025-03-21T01:18:43.000Z" title="Created 2025-03-21 09:18:43">2025-03-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/17/note-db-03/" title="note-db-03">note-db-03</a><time datetime="2025-03-17T09:19:26.000Z" title="Created 2025-03-17 17:19:26">2025-03-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/17/note-%E6%9D%8E%E5%AE%8F%E6%AF%85-ml-CNN/" title="note-李宏毅-ml-CNN">note-李宏毅-ml-CNN</a><time datetime="2025-03-17T00:18:48.000Z" title="Created 2025-03-17 08:18:48">2025-03-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/14/note-db-02/" title="note-db-02">note-db-02</a><time datetime="2025-03-14T01:54:20.000Z" title="Created 2025-03-14 09:54:20">2025-03-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By ggengx</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.3</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

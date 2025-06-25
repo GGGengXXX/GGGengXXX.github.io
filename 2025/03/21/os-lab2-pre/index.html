@@ -1,0 +1,354 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>os-lab2-pre | GGGengXXX</title><meta name="author" content="ggengx"><meta name="copyright" content="ggengx"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="-  ThinkingThinking 2.1实际程序中，访存、跳转等指令以及用于取指的PC寄存器中的访存目标地址都是虚拟地址。因此，C，MIPS程序中使用的地址都应该是虚拟地址。    地址 用途 位置    0x00000000-0x7fffffff 用户程序代码与数据 kuseg   0x80000000-0x9fffffff 存放内核代码与数据 kseg0   0xa0000000-0xb">
+<meta property="og:type" content="article">
+<meta property="og:title" content="os-lab2-pre">
+<meta property="og:url" content="http://gggengxxx.github.io/2025/03/21/os-lab2-pre/index.html">
+<meta property="og:site_name" content="GGGengXXX">
+<meta property="og:description" content="-  ThinkingThinking 2.1实际程序中，访存、跳转等指令以及用于取指的PC寄存器中的访存目标地址都是虚拟地址。因此，C，MIPS程序中使用的地址都应该是虚拟地址。    地址 用途 位置    0x00000000-0x7fffffff 用户程序代码与数据 kuseg   0x80000000-0x9fffffff 存放内核代码与数据 kseg0   0xa0000000-0xb">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://gggengxxx.github.io/img/maomao.jpg">
+<meta property="article:published_time" content="2025-03-21T01:18:43.000Z">
+<meta property="article:modified_time" content="2025-04-01T17:01:11.586Z">
+<meta property="article:author" content="ggengx">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://gggengxxx.github.io/img/maomao.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "os-lab2-pre",
+  "url": "http://gggengxxx.github.io/2025/03/21/os-lab2-pre/",
+  "image": "http://gggengxxx.github.io/img/maomao.jpg",
+  "datePublished": "2025-03-21T01:18:43.000Z",
+  "dateModified": "2025-04-01T17:01:11.586Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "ggengx",
+      "url": "http://gggengxxx.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://gggengxxx.github.io/2025/03/21/os-lab2-pre/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'os-lab2-pre',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">GGGengXXX</span></a><a class="nav-page-title" href="/"><span class="site-name">os-lab2-pre</span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">os-lab2-pre</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-03-21T01:18:43.000Z" title="Created 2025-03-21 09:18:43">2025-03-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-04-01T17:01:11.586Z" title="Updated 2025-04-02 01:01:11">2025-04-02</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>- </p>
+<h1 id="Thinking"><a href="#Thinking" class="headerlink" title="Thinking"></a>Thinking</h1><h2 id="Thinking-2-1"><a href="#Thinking-2-1" class="headerlink" title="Thinking 2.1"></a>Thinking 2.1</h2><p>实际程序中，访存、跳转等指令以及用于取指的PC寄存器中的访存目标地址都是虚拟地址。因此，C，MIPS程序中使用的地址都应该是虚拟地址。</p>
+<table>
+<thead>
+<tr>
+<th>地址</th>
+<th>用途</th>
+<th>位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>0x00000000-0x7fffffff</code></td>
+<td>用户程序代码与数据</td>
+<td>kuseg</td>
+</tr>
+<tr>
+<td><code>0x80000000-0x9fffffff</code></td>
+<td>存放内核代码与数据</td>
+<td>kseg0</td>
+</tr>
+<tr>
+<td><code>0xa0000000-0xbfffffff</code></td>
+<td>用于访问外设</td>
+<td>kseg1</td>
+</tr>
+</tbody></table>
+<h2 id="Thinking-2-2"><a href="#Thinking-2-2" class="headerlink" title="Thinking 2.2"></a>Thinking 2.2</h2><p>封装，减少重复代码，方便复用</p>
+<p>使用双向链表可以实现时间复杂度为 <code>O(1)</code> 的单点前插，后插，和单点删除</p>
+<p>使用单向链表只能实现 <code>O(1)</code> 的后插，删除和前插都需要遍历链表</p>
+<p>循环链表维护了一个指向末尾元素的next域的指针，这样做的好处是可以方便地更改末尾元素的next元素的值，方便的完成尾增的操作</p>
+<h2 id="Thinking-2-3"><a href="#Thinking-2-3" class="headerlink" title="Thinking 2.3"></a>Thinking 2.3</h2><ul>
+<li>首先，应该选择 struct * lh_first Page_list 应该持有的是第一个page的指针</li>
+<li>依据 queue.h 中链表中节点的指针域的定义，选择 <code>**prev</code></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> C:</span><br><span class="line">structPage_list&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span>&#123;</span></span><br><span class="line">			structPage *le_next;</span><br><span class="line">			structPage **le_prev;</span><br><span class="line">		&#125;pp_link;</span><br><span class="line">		u_shortpp_ref;</span><br><span class="line">	&#125;*lh_first;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Thinking-2-4"><a href="#Thinking-2-4" class="headerlink" title="Thinking 2.4"></a>Thinking 2.4</h2><ul>
+<li>对于多进程操作系统来说，多个进程使用的相同的虚拟地址映射到不同的物理地址。需要增加 <code>ASID</code> 来对不同的进程映射做唯一标识</li>
+<li>ASID 段的位数为8位，能够标识的不同的地址空间的个数为256</li>
+</ul>
+<h2 id="Thinking-2-5"><a href="#Thinking-2-5" class="headerlink" title="Thinking 2.5"></a>Thinking 2.5</h2><ul>
+<li><code>tlb_invalidate</code> 调用 <code>tlb_out</code> </li>
+<li>将 <code>va</code> 和 <code>asid</code> 对应的 <code>tlb</code> 表项废弃</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">LEAF(tlb_out) # 定义函数开始 LEAF 表示该函数不调用其他函数 有利于优化栈帧</span><br><span class="line">.set noreorder # 取消指令重排</span><br><span class="line">	mfc0 t0, CP0_ENTRYHI # 将 CP0_ENTRYHI 填到 t0 寄存器中</span><br><span class="line">	mtc0 a0, CP0_ENTRYHI # 将 a0 即 va和 asid拼接的内容移动到 CP0_ENTRYHI 中</span><br><span class="line">	nop</span><br><span class="line">	tlbp # 根据 CP0_ENTRYHI 中的内容查找tlb  并将结果编号保存到 CP0_INDEX 中</span><br><span class="line">	nop</span><br><span class="line">	mfc0 t1, CP0_INDEX # 将查询结果由 CP0 保存到寄存器 t1</span><br><span class="line">.set reorder # 开启指令重排</span><br><span class="line">	bltz t1, NO_SUCH_ENTRY # 如果查询结果小于零，说明没有找到，跳转</span><br><span class="line">.set noreorder</span><br><span class="line">	mtc0 zero, CP0_ENTRYHI</span><br><span class="line">	mtc0 zero, CP0_ENTRYLO0</span><br><span class="line">	mtc0 zero, CP0_ENTRYLO1 # 将三个CP0 寄存器置零</span><br><span class="line">	nop</span><br><span class="line">	tlbwi # 将CP0 内容写到 CP0_INDEX 对应的tlb 表项中</span><br><span class="line">.set reorder</span><br><span class="line">NO_SUCH_ENTRY:</span><br><span class="line">	mtc0 t0,CP0_ENTRYHI # 将临时寄存器的值写回 CP0 恢复原值</span><br><span class="line">	j ra # 跳转回到 $ra 处</span><br><span class="line">END(tlb_out)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Thinking-2-6"><a href="#Thinking-2-6" class="headerlink" title="Thinking 2.6"></a>Thinking 2.6</h2><p><code>do_tlb_refill</code> 对应 访问tlb，调用 <code>page_lookup</code> 对应访存 页表，调用 <code>page_alloc</code> 对应访问 内存。</p>
+<p>函数调用是访存流程的触发器，函数执行过程中的取指，数据访问，栈操作均依赖虚拟内存机制。</p>
+<h2 id="Thinking-2-7"><a href="#Thinking-2-7" class="headerlink" title="Thinking 2.7"></a>Thinking 2.7</h2><p> <code>X86</code> 的内存管理机制主要包括 <strong>分段和分页</strong> 两种机制，两者可单独或组合使用， <code>mips</code> 仅支持分页。TLB未命中时，<code>x86</code> 使用硬件自动处理未命中，而 <code>mips</code> 使用软件处理未命中。</p>
+<h1 id="难点分析"><a href="#难点分析" class="headerlink" title="难点分析"></a>难点分析</h1><p>实验难点在于理解内存访存的流程。在 <code>lab2</code> 中我们使用的都是 <code>kseg0</code> 中的虚拟地址。使用页表的访存过程为，首先得到页目录表，然后根据页目录表和虚拟地址的前十位作为偏移，得到页目录表中对应的表项。如果没有这个表项，就要分配一个新的页框作为二级页表，然后根据页目录表中的表项前20为作为物理地址来找二级页表所在的页框。在二级页表的页框进一步使用虚拟地址的后十位得到偏移量，得到目标物理地址。</p>
+<p>另外，使用中在操作链表时指针的使用也需要格外的注意。</p>
+<h1 id="心得体会"><a href="#心得体会" class="headerlink" title="心得体会"></a>心得体会</h1><p>在第一次看指导书和代码时有些不明所以，能够模糊地理解代码填补的原因，但是对其原理还是认识模糊。在多阅读了几次代码后，这样的情况有些改善，需要在阅读时不断翻阅其他头文件中的一些宏定义才能对当前的函数产生更明确的认识。</p>
+<h2 id="Exer-2-1"><a href="#Exer-2-1" class="headerlink" title="Exer 2.1"></a>Exer 2.1</h2><blockquote>
+<p>在实验中，指定了硬件可用内存大小 memsize，请你用内存大小 memsize 完成总物理页数 npage 的初始化。  </p>
+</blockquote>
+<p>可用内存大小<code>memsize</code> 求总物理页数 <code>npage</code> </p>
+<p>每个页面的大小为 <code>4KB</code> </p>
+<p><code>include/mmu.h</code> 定义了 <code>#define PGSHIFT 12</code></p>
+<p>·memsize 右移 12 位即可</p>
+<h2 id="Exer-2-2"><a href="#Exer-2-2" class="headerlink" title="Exer 2.2"></a>Exer 2.2</h2><p>双向链表的后插</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> LIST_INSERT_AFTER(listelm, elm, field)                                                     \</span></span><br><span class="line"><span class="meta">        <span class="comment">/* Exercise 2.2: Your code here. */</span>  \</span></span><br><span class="line"><span class="meta">        do&#123;\</span></span><br><span class="line"><span class="meta">                LIST_NEXT((elm),field) = LIST_NEXT((listelm),field);\</span></span><br><span class="line"><span class="meta">                <span class="keyword">if</span>(LIST_NEXT((listelm),field)!=NULL)\</span></span><br><span class="line"><span class="meta">                &#123;\</span></span><br><span class="line"><span class="meta">                        LIST_NEXT((listelm),field)-&gt;field.le_prev = &amp;(LIST_NEXT((elm),field));\</span></span><br><span class="line"><span class="meta">                &#125;\</span></span><br><span class="line"><span class="meta">                ((elm)-&gt;field.le_prev) = &amp;(LIST_NEXT((listelm),field));\</span></span><br><span class="line"><span class="meta">                                LIST_NEXT((listelm),field) = (elm);\</span></span><br><span class="line"><span class="meta">        &#125;while (0)</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Exer-2-3"><a href="#Exer-2-3" class="headerlink" title="Exer 2.3"></a>Exer 2.3</h2><p>完成 <code>page_init</code> 函数，实际上是为 <strong>内核态</strong> 分配物理地址中的页框</p>
+<p>我们需要使用到函数PADDR</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> PADDR(kva)                                                                                 \</span></span><br><span class="line"><span class="meta">        (&#123;                                                                                         \</span></span><br><span class="line"><span class="meta">                u_long _a = (u_long)(kva);                                                         \</span></span><br><span class="line"><span class="meta">                <span class="keyword">if</span> (_a &lt; ULIM)                                                                     \</span></span><br><span class="line"><span class="meta">                        panic(<span class="string">&quot;PADDR called with invalid kva %08lx&quot;</span>, _a);                          \</span></span><br><span class="line"><span class="meta">                _a - ULIM;                                                                         \</span></span><br><span class="line"><span class="meta">        &#125;)</span></span><br></pre></td></tr></table></figure>
+
+<p>首先，初始化pagelist链表，然后对齐freemem，使用PADDR，去掉最高一位，将虚拟地址 <code>kva</code> 转换为物理地址，右移就可以数 有多少个页面已经被占用。</p>
+<p>把已经被使用的页表通过循环 <code>pp_ref</code> 置 <code>1</code> 其余空闲的 置 <code>0</code> 并且把空闲的插入到 <code>page_list</code> 中就可以了。 </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">page_init</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">        <span class="comment">/* Step 1: Initialize page_free_list. */</span></span><br><span class="line">        <span class="comment">/* Hint: Use macro `LIST_INIT` defined in include/queue.h. */</span></span><br><span class="line">        <span class="comment">/* Exercise 2.3: Your code here. (1/4) */</span></span><br><span class="line">        LIST_INIT(page_free_list);</span><br><span class="line">        <span class="comment">/* Step 2: Align `freemem` up to multiple of PAGE_SIZE. */</span></span><br><span class="line">        <span class="comment">/* Exercise 2.3: Your code here. (2/4) */</span></span><br><span class="line">        freemem = ROUND(freemem,PAGE_SIZE);</span><br><span class="line">        <span class="comment">/* Step 3: Mark all memory below `freemem` as used (set `pp_ref` to 1) */</span></span><br><span class="line">        <span class="comment">/* Exercise 2.3: Your code here. (3/4) */</span></span><br><span class="line">        <span class="type">int</span> size = PADDR(freemem) / PAGE_SIZE;</span><br><span class="line">        <span class="type">int</span> i;</span><br><span class="line">        <span class="keyword">for</span>(i = <span class="number">0</span>;i &lt; size;++i)</span><br><span class="line">        &#123;</span><br><span class="line">                pages[i].pp_ref = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/* Step 4: Mark the other memory as free. */</span></span><br><span class="line">        <span class="comment">/* Exercise 2.3: Your code here. (4/4) */</span></span><br><span class="line">        <span class="keyword">for</span>(i=size;i&lt;npages;++i)</span><br><span class="line">        &#123;</span><br><span class="line">                pages[i].pp_ref = <span class="number">0</span>;</span><br><span class="line">                LIST_INSERT_HEAD(&amp;page_free_list,pages+i,pp_link);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Exer2-4"><a href="#Exer2-4" class="headerlink" title="Exer2.4"></a>Exer2.4</h2><p>在 page_init 函数运行完毕后，在 MOS 中如果想申请存储空间，都需要通过这个函数来申请分配。该函数的逻辑简单来说，可以表述为：</p>
+<ol>
+<li>如果空闲链表没有可用页，返回异常返回值。</li>
+<li>如果空闲链表有可用的页，取出链表头部的一页；初始化后，将该页对应的页</li>
+</ol>
+<p>控制块的地址放到调用者指定的地方。<br>填空时，你可能需要使用链表宏 LIST_EMPTY 与函数 page2kva。  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">page_alloc</span><span class="params">(<span class="keyword">struct</span> Page **new)</span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">Page</span> *<span class="title">pp</span>;</span> <span class="comment">// 分配出去的Page</span></span><br><span class="line">    pp = LIST_HEAD(&amp;page_free_list);</span><br><span class="line">    <span class="keyword">if</span>(pp == <span class="literal">NULL</span>) <span class="comment">// 如果page_free_list为空，抛异常</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> -E_NO_MEM;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 还有空页，那么将这个 page 从 page_free_list 中移除</span></span><br><span class="line">    LIST_REMOVE(pp,pp_link);</span><br><span class="line">    <span class="comment">// 接下来应该把这个page在内存当中清空</span></span><br><span class="line">    <span class="comment">// 注意这个时候的pp 是物理页，需要将其转化为内核虚拟地址</span></span><br><span class="line">    <span class="comment">// ((pp-pages)&lt;&lt;12)+ULIM</span></span><br><span class="line">    <span class="comment">// 调用 page2kva 即可</span></span><br><span class="line">    <span class="built_in">memset</span>((<span class="type">void</span>*)page2kva(pp),<span class="number">0</span>,PAGE_SIZE);</span><br><span class="line">    *new = pp;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Exer-2-5"><a href="#Exer-2-5" class="headerlink" title="Exer 2.5"></a>Exer 2.5</h2><p>Exercise 2.5 完成 page_free 函数。<br>提示：使用链表宏 LIST_INSERT_HEAD，将页结构体插入空闲页结构体链表。  </p>
+<p>直接调用 LIST_INSERT_HEAD 插入 <code>page_free_list</code> 即可</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">page_free</span><span class="params">(<span class="keyword">struct</span> Page *pp)</span></span><br><span class="line">&#123;</span><br><span class="line">	assert(pp-&gt;pp_ref == <span class="number">0</span>);</span><br><span class="line">	<span class="comment">// 如果 assert 中的内容不满足，会抛异常</span></span><br><span class="line">    LIST_INSERT_HEAD(&amp;page_free_list,pp,pp_link);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Exer-2-6"><a href="#Exer-2-6" class="headerlink" title="Exer 2.6"></a>Exer 2.6</h2><p>Exercise 2.6 完成 pgdir_walk 函数。<br>该函数的作用是：给定一个虚拟地址，在给定的页目录中查找这个虚拟地址对应的页<br>表项，将其地址写入 *ppte。<br>• 如果这一虚拟地址对应的二级页表存在，则设置 *ppte 为这一页表项的地址；<br>• 如果这一虚拟地址对应的二级页表不存在（即这一虚拟地址对应的页目录项无效），<br>则当 create 不为 0 时先创建二级页表再查找页表项，为 0 时则将 *ppte 设置为空<br>指针。<br>注意，这里可能会在页目录项无效且 create 为真时，使用 page_alloc 创建一个页表，<br>此时应维护申请得到的物理页的 pp_ref 字段。  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">pgdir_walk</span><span class="params">(Pde *pgdir, u_long va, <span class="type">int</span> create, Pte **ppte)</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Pde *pgdir_entryp; <span class="comment">// 页目录条目</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Page</span> *<span class="title">pp</span>;</span> <span class="comment">// 页目录缺项时，分配的新的页表所在的页</span></span><br></pre></td></tr></table></figure>
+
+<p>首先，得到对应的页目录 条目 <code>pgdir_entryp</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pgdir_entryp = pgdir + PDX(va);</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>PDX</code> 用于取到 <code>31-22</code> 位上的一级页号</p>
+<p>接下来，我们要看看 <code>pgdir_entryp</code> 是否能够指向一个有效的二级页表，这主要通过 <code>PTE_V</code> 上的值是否为 <code>1</code> 来决定</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!((*pgdir_entryp)&amp;PTE_V))</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(create)</span><br><span class="line">    &#123;</span><br><span class="line">        try(page_alloc(&amp;pp));</span><br><span class="line">        *pgdir_entryp = page2pp(pp);</span><br><span class="line">        *pgdir_entryp = (*pgdir_entryp) | PTE_V | PTE_C_CACHEABLE;</span><br><span class="line">        pp-&gt;pp_ref ++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        *ppte = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这时，我们新分配了物理页面，并且填好了 <code>pgdir_entryp</code> </p>
+<p>接下来，我们需要来修改 <code>*ppte</code> 的值了。由 <code>pgdir_entryp</code> 的前二十位可以得到二级页表所在的页框对应的物理地址，我们由 <code>va</code> 的 <code>21-12</code> 位可以进一步得到偏移地址，两者加起来就是 目标的 页表项了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*ppte = (PTE *)KADDR(PTE_ADDR(*pgdir_entryp)) + PTX(va);</span><br></pre></td></tr></table></figure>
+
+<h2 id="Exer-2-7"><a href="#Exer-2-7" class="headerlink" title="Exer 2.7"></a>Exer 2.7</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">graph TD;</span><br><span class="line">A(页目录存在到二级页表的映射且有效) --是--&gt; B[是否就是当前要插入的页面]</span><br><span class="line">A --否--&gt; C[创建二级页表条目]</span><br><span class="line">B --是--&gt; D(填写perm PTE_V PTE_C_CACHEABLE)</span><br><span class="line">D --&gt; E(return 0)</span><br><span class="line">B --否--&gt; F(移除页面)</span><br><span class="line">F --&gt; C</span><br><span class="line">C --&gt; G(填写物理地址 perm PTE_V PTE_C_CACHEABLE)</span><br><span class="line">G --&gt; E</span><br></pre></td></tr></table></figure>
+
+<p>注意复用 <code>pgdir_walk</code> 可以实现 查找页目录和虚拟地址对应的页表条目并且可以创建新的条目</p>
+<h2 id="Exer-2-8"><a href="#Exer-2-8" class="headerlink" title="Exer 2.8"></a>Exer 2.8</h2><p>完成 tlb_asm.S 中 <code>tlb_out</code> 的部分，这个函数的作用是根据 <code>CP0_ENTRYHI</code> 的内容来把 <code>tlb</code> 当中对应的表项删除。我们的汇编代码并不能直接操作 <code>tlb</code> 往往是需要先填写 <code>CP0</code> 的内容，然后使用 <code>TLB</code> 相关指令</p>
+<p><code>tlbex.c</code> 中存在函数 <code>tlb_invalidate(u_int asid, u_long va)</code> </p>
+<p>拼接成要填入 <code>CP0_ENTRYHI</code> 中的内容，然后调用汇编代码中的 <code>tlb_out</code></p>
+<p>此时 参数存在 <code>$a0</code> 中</p>
+<p>先把 <code>CP0_ENTRYHI</code> 中的内容取出到 <code>t0</code> 然后把 <code>a0</code> 中的内容填进去</p>
+<figure class="highlight mips"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mfc0 </span><span class="built_in">t0</span>, CP0_ENTRYHI</span><br><span class="line"><span class="keyword">mtc0 </span><span class="built_in">a0</span>, CP0_ENTRYHI</span><br></pre></td></tr></table></figure>
+
+<p>然后可以调用 <code>tlbp</code> 根据 <code>cp0_entryhi</code> 中的内容查找 <code>tlb</code> 中表项，找到了就保存到 <code>index</code> 中</p>
+<figure class="highlight mips"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">nop</span></span><br><span class="line"><span class="keyword"></span><span class="keyword">tlbp</span></span><br><span class="line"><span class="keyword"></span><span class="keyword">nop</span></span><br><span class="line"><span class="keyword"></span><span class="keyword">mfc0 </span><span class="built_in">t1</span>, CP0_INDEX</span><br><span class="line"><span class="keyword">bltz </span><span class="built_in">t1</span>, NO_SUCH_ENTRY</span><br></pre></td></tr></table></figure>
+
+<p>如果 t1 中的内容小于零，则没找到，我们恢复 <code>CP0</code> 然后退出即可</p>
+<p>如果找到了，就把 三个 <code>CP0</code> 全部置零，然后调用 <code>tlbwi</code> 把零值写入</p>
+<figure class="highlight mips"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mtc0 </span><span class="built_in">zero</span>, CP0_ENTRYHI</span><br><span class="line"><span class="keyword">mtc0 </span><span class="built_in">zero</span>, CP0_ENTRYLO0</span><br><span class="line"><span class="keyword">mtc0 </span><span class="built_in">zero</span>, CP0_ENTRYLO1</span><br><span class="line"><span class="keyword">nop</span></span><br><span class="line"><span class="keyword"></span><span class="keyword">tlbwi</span></span><br></pre></td></tr></table></figure>
+
+<p>最后，恢复 <code>CP0</code> 中的内容，然后退出函数</p>
+<figure class="highlight mips"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">NO_SUCH_ENTRY:</span></span><br><span class="line">	<span class="keyword">mtc0 </span><span class="built_in">t0</span>, CP0_ENTRYHI</span><br><span class="line">	<span class="keyword">j </span><span class="built_in">ra</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="key-code-alloc"><a href="#key-code-alloc" class="headerlink" title="key code: alloc"></a>key code: alloc</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Lab 2 Key Code &quot;alloc&quot; */</span></span><br><span class="line"><span class="comment">/* Overview:</span></span><br><span class="line"><span class="comment">    Allocate `n` bytes physical memory with alignment `align`, if `clear` is set, clear the</span></span><br><span class="line"><span class="comment">    allocated memory.</span></span><br><span class="line"><span class="comment">    This allocator is used only while setting up virtual memory system.</span></span><br><span class="line"><span class="comment">   Post-Condition:</span></span><br><span class="line"><span class="comment">    If we&#x27;re out of memory, should panic, else return this address of memory we have allocated.*/</span></span><br><span class="line"><span class="type">void</span> *<span class="title function_">alloc</span><span class="params">(u_int n, u_int align, <span class="type">int</span> clear)</span> &#123;</span><br><span class="line">        <span class="keyword">extern</span> <span class="type">char</span> end[];</span><br><span class="line">        u_long alloced_mem;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Initialize `freemem` if this is the first time. The first virtual address that the</span></span><br><span class="line"><span class="comment">         * linker did *not* assign to any kernel code or global variables. */</span></span><br><span class="line">        <span class="keyword">if</span> (freemem == <span class="number">0</span>) &#123;</span><br><span class="line">                freemem = (u_long)end; <span class="comment">// end</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Step 1: Round up `freemem` up to be aligned properly */</span></span><br><span class="line">        freemem = ROUND(freemem, align);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Step 2: Save current value of `freemem` as allocated chunk. */</span></span><br><span class="line">        alloced_mem = freemem;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Step 3: Increase `freemem` to record allocation. */</span></span><br><span class="line">        freemem = freemem + n;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Panic if we&#x27;re out of memory.</span></span><br><span class="line">        panic_on(PADDR(freemem) &gt;= memsize);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Step 4: Clear allocated chunk if parameter `clear` is set. */</span></span><br><span class="line">        <span class="keyword">if</span> (clear) &#123;</span><br><span class="line">                <span class="built_in">memset</span>((<span class="type">void</span> *)alloced_mem, <span class="number">0</span>, n);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Step 5: return allocated chunk. */</span></span><br><span class="line">        <span class="keyword">return</span> (<span class="type">void</span> *)alloced_mem;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* End of Key Code &quot;alloc&quot; */</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-函数声明和作用"><a href="#1-函数声明和作用" class="headerlink" title="1. 函数声明和作用"></a>1. 函数声明和作用</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> *<span class="title function_">alloc</span><span class="params">(u_int n, u_int align, <span class="type">int</span> clear)</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>作用</strong>：分配一段大小为 <code>n</code> 字节的物理内存，且按照 <code>align</code> 指定的对齐要求对齐。如果 <code>clear</code> 参数不为 0，则在分配后会将这块内存全部清零。</p>
+<p><strong>使用场景</strong>：这个分配器通常用于系统启动阶段建立虚拟内存之前的内存分配。由于内存初始化阶段并不需要复杂的内存管理机制，所以这种简单的线性分配方式就足够用了。</p>
+<h3 id="2-内存初始位置的设置"><a href="#2-内存初始位置的设置" class="headerlink" title="2. 内存初始位置的设置"></a>2. 内存初始位置的设置</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="type">char</span> end[];</span><br><span class="line">u_long alloced_mem;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>说明<ul>
+<li><code>extern char end[];</code> 声明了一个外部符号 <code>end</code>，这个符号由链接器定义，表示内核代码和全局变量结束后，未被分配的第一个内存地址。</li>
+<li>变量 <code>alloced_mem</code> 用来保存当前分配的内存起始地址。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-初始化空闲内存指针"><a href="#3-初始化空闲内存指针" class="headerlink" title="3. 初始化空闲内存指针"></a>3. 初始化空闲内存指针</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (freemem == <span class="number">0</span>) &#123;</span><br><span class="line">    freemem = (u_long)end;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>功能</strong>：如果这是第一次调用 <code>alloc</code> 函数，则 <code>freemem</code> 还没有被初始化。这里将 <code>freemem</code> 设置为 <code>end</code> 的地址，表示从这个位置开始的内存还未被使用。</li>
+</ul>
+<hr>
+<h3 id="4-内存对齐"><a href="#4-内存对齐" class="headerlink" title="4. 内存对齐"></a>4. 内存对齐</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">freemem = ROUND(freemem, align);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>功能</strong>：调用 <code>ROUND</code> 宏（或函数）对当前的 <code>freemem</code> 地址进行上取整，使其满足 <code>align</code> 对齐的要求。</li>
+<li><strong>目的</strong>：某些硬件或数据结构对齐有严格要求，确保返回的地址满足指定的对齐标准。</li>
+</ul>
+<hr>
+<h3 id="5-记录分配内存起始地址"><a href="#5-记录分配内存起始地址" class="headerlink" title="5. 记录分配内存起始地址"></a>5. 记录分配内存起始地址</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alloced_mem = freemem;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>作用</strong>：将对齐后的 <code>freemem</code> 地址保存到 <code>alloced_mem</code> 中，作为本次分配的内存起始地址。</li>
+</ul>
+<hr>
+<h3 id="6-更新空闲内存指针"><a href="#6-更新空闲内存指针" class="headerlink" title="6. 更新空闲内存指针"></a>6. 更新空闲内存指针</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">freemem = freemem + n;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>作用</strong>：将 <code>freemem</code> 向后移动 <code>n</code> 字节，表示这段内存已经被占用。下次分配时会从更新后的 <code>freemem</code> 地址开始。</li>
+</ul>
+<hr>
+<h3 id="7-检查是否超出物理内存范围"><a href="#7-检查是否超出物理内存范围" class="headerlink" title="7. 检查是否超出物理内存范围"></a>7. 检查是否超出物理内存范围</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">panic_on(PADDR(freeem) &gt;= memsize);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>功能</strong>：调用 <code>panic_on</code> 检查当前分配后的地址是否超出了系统总内存大小 <code>memsize</code>。这里通过 <code>PADDR(freemem)</code> 将虚拟地址转换成物理地址进行比较。要求接受参数必须是位于 <code>kseg0</code> 中的地址，因为这样只要高3位置零就能得到物理地址了。</li>
+<li><strong>作用</strong>：如果超出内存范围，则触发 panic，通常这表示内存耗尽，系统无法继续分配内存。</li>
+</ul>
+<hr>
+<h3 id="8-清零内存（可选）"><a href="#8-清零内存（可选）" class="headerlink" title="8. 清零内存（可选）"></a>8. 清零内存（可选）</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (clear) &#123;</span><br><span class="line">    <span class="built_in">memset</span>((<span class="type">void</span> *)alloced_mem, <span class="number">0</span>, n);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>功能</strong>：如果 <code>clear</code> 参数为真（非零），则调用 <code>memset</code> 将分配到的内存块全部置为 0。</li>
+<li><strong>目的</strong>：清零操作有助于避免旧数据泄露，并保证内存处于一个已知状态。</li>
+</ul>
+<hr>
+<h3 id="9-返回分配的内存地址"><a href="#9-返回分配的内存地址" class="headerlink" title="9. 返回分配的内存地址"></a>9. 返回分配的内存地址</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> (<span class="type">void</span> *)alloced_mem;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>作用</strong>：返回分配到的内存块的起始地址。</li>
+</ul>
+<hr>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>这段代码是一个简单的线性内存分配器，其基本流程如下：</p>
+<ol>
+<li><strong>初始化</strong>：如果 <code>freemem</code> 未初始化，则将其设为 <code>end</code>（内核结束位置）。</li>
+<li><strong>对齐</strong>：根据传入的 <code>align</code> 参数对 <code>freemem</code> 地址进行对齐。</li>
+<li><strong>记录分配地址</strong>：保存当前对齐后的地址作为本次分配的起始地址。</li>
+<li><strong>更新指针</strong>：将 <code>freemem</code> 向后移动 <code>n</code> 字节，表示这段内存已经被分配。</li>
+<li><strong>边界检查</strong>：通过 <code>panic_on</code> 检查是否超出物理内存范围，如果超出则触发 panic。</li>
+<li><strong>清零</strong>：根据 <code>clear</code> 参数决定是否将分配到的内存块清零。</li>
+<li><strong>返回地址</strong>：返回分配到的内存块起始地址。</li>
+</ol>
+<p>这种内存分配方式简单高效，适用于系统初始化阶段的内存管理，但不支持内存释放，因此通常只在内核早期阶段使用。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://GGGengXXX.github.io">ggengx</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://gggengxxx.github.io/2025/03/21/os-lab2-pre/">http://gggengxxx.github.io/2025/03/21/os-lab2-pre/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/maomao.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/03/17/note-db-03/" title="note-db-03"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2">note-db-03</div></div><div class="info-2"><div class="info-item-1">-  -  什么是代数  运算对象 用于按照规则生成新的值的变量 或 值   运算符 表示 从旧值生成新值 的过程    关系代数  对关系的查询语言：以 对关系的运算表达查询 以 关系 为运算对象 操作符： 数据库中我们对于关系最常做的操作 运算结果： 也是关系 三要素 运算对象： 关系 运算结果： 关系 运算符： 四类    运算符  集合运算符  关系 -&gt; 元组的集合 交集，并集，差集 操作对象是同样属性的表   笛卡尔积 学生表  $\times $ 课程表     专门的关系运算符  涉及 行 和 列  选择 (σ) 作用：从表中筛选满足特定条件的行。 例子：假设我们希望找出成绩大于 60 分的学生。 表达式可以写作： σ（成绩 &gt; 60）（学生表） 结果：仅返回成绩大于 60 分的学生那几行。 投影 (π) 作用：从表中选择指定的列。 例子：如果只需要学生的姓名和成绩而不关心其他信息，可以写作： π（姓名, 成绩）（学生表） 结果：只显示姓名和成绩两列。 连接 (⨝) 作用：把两个表中有相关联字段的行合并起来。...</div></div></div></a><a class="pagination-related" href="/2025/06/25/os-shell/" title="os_shell"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">os_shell</div></div><div class="info-2"><div class="info-item-1">实现目标 支持相对路径 内建指令cd 内建指令pwd 环境变量管理 输入指令优化 指令自由输入 不带 .b 后缀指令 快捷键 历史指令 实现注释功能 实现反引号 实现一行多指令 指令条件执行 更多指令 追加重定向  AST树构建使用这样一个树的方法就可以很方便地实现以下指令  指令条件执行 实现反引号 实现一行多指令  并且我们实现管道和重定向的方法也和原始给的方法有差别了，这个过程的逻辑变得更加清晰了。 这一部分大概思路  ai...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/maomao.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">ggengx</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/GGGengXXX"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is ggem Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Thinking"><span class="toc-number">1.</span> <span class="toc-text">Thinking</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Thinking-2-1"><span class="toc-number">1.1.</span> <span class="toc-text">Thinking 2.1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thinking-2-2"><span class="toc-number">1.2.</span> <span class="toc-text">Thinking 2.2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thinking-2-3"><span class="toc-number">1.3.</span> <span class="toc-text">Thinking 2.3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thinking-2-4"><span class="toc-number">1.4.</span> <span class="toc-text">Thinking 2.4</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thinking-2-5"><span class="toc-number">1.5.</span> <span class="toc-text">Thinking 2.5</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thinking-2-6"><span class="toc-number">1.6.</span> <span class="toc-text">Thinking 2.6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thinking-2-7"><span class="toc-number">1.7.</span> <span class="toc-text">Thinking 2.7</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9A%BE%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">难点分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BF%83%E5%BE%97%E4%BD%93%E4%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">心得体会</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Exer-2-1"><span class="toc-number">3.1.</span> <span class="toc-text">Exer 2.1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exer-2-2"><span class="toc-number">3.2.</span> <span class="toc-text">Exer 2.2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exer-2-3"><span class="toc-number">3.3.</span> <span class="toc-text">Exer 2.3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exer2-4"><span class="toc-number">3.4.</span> <span class="toc-text">Exer2.4</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exer-2-5"><span class="toc-number">3.5.</span> <span class="toc-text">Exer 2.5</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exer-2-6"><span class="toc-number">3.6.</span> <span class="toc-text">Exer 2.6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exer-2-7"><span class="toc-number">3.7.</span> <span class="toc-text">Exer 2.7</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exer-2-8"><span class="toc-number">3.8.</span> <span class="toc-text">Exer 2.8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#key-code-alloc"><span class="toc-number">3.9.</span> <span class="toc-text">key code: alloc</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E%E5%92%8C%E4%BD%9C%E7%94%A8"><span class="toc-number">3.9.1.</span> <span class="toc-text">1. 函数声明和作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%86%85%E5%AD%98%E5%88%9D%E5%A7%8B%E4%BD%8D%E7%BD%AE%E7%9A%84%E8%AE%BE%E7%BD%AE"><span class="toc-number">3.9.2.</span> <span class="toc-text">2. 内存初始位置的设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%88%9D%E5%A7%8B%E5%8C%96%E7%A9%BA%E9%97%B2%E5%86%85%E5%AD%98%E6%8C%87%E9%92%88"><span class="toc-number">3.9.3.</span> <span class="toc-text">3. 初始化空闲内存指针</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90"><span class="toc-number">3.9.4.</span> <span class="toc-text">4. 内存对齐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%AE%B0%E5%BD%95%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98%E8%B5%B7%E5%A7%8B%E5%9C%B0%E5%9D%80"><span class="toc-number">3.9.5.</span> <span class="toc-text">5. 记录分配内存起始地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%9B%B4%E6%96%B0%E7%A9%BA%E9%97%B2%E5%86%85%E5%AD%98%E6%8C%87%E9%92%88"><span class="toc-number">3.9.6.</span> <span class="toc-text">6. 更新空闲内存指针</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%A3%80%E6%9F%A5%E6%98%AF%E5%90%A6%E8%B6%85%E5%87%BA%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E8%8C%83%E5%9B%B4"><span class="toc-number">3.9.7.</span> <span class="toc-text">7. 检查是否超出物理内存范围</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E6%B8%85%E9%9B%B6%E5%86%85%E5%AD%98%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="toc-number">3.9.8.</span> <span class="toc-text">8. 清零内存（可选）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-%E8%BF%94%E5%9B%9E%E5%88%86%E9%85%8D%E7%9A%84%E5%86%85%E5%AD%98%E5%9C%B0%E5%9D%80"><span class="toc-number">3.9.9.</span> <span class="toc-text">9. 返回分配的内存地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.9.10.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/25/os-shell/" title="os_shell">os_shell</a><time datetime="2025-06-25T15:57:05.000Z" title="Created 2025-06-25 23:57:05">2025-06-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/21/os-lab2-pre/" title="os-lab2-pre">os-lab2-pre</a><time datetime="2025-03-21T01:18:43.000Z" title="Created 2025-03-21 09:18:43">2025-03-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/17/note-db-03/" title="note-db-03">note-db-03</a><time datetime="2025-03-17T09:19:26.000Z" title="Created 2025-03-17 17:19:26">2025-03-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/17/note-%E6%9D%8E%E5%AE%8F%E6%AF%85-ml-CNN/" title="note-李宏毅-ml-CNN">note-李宏毅-ml-CNN</a><time datetime="2025-03-17T00:18:48.000Z" title="Created 2025-03-17 08:18:48">2025-03-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/14/note-db-02/" title="note-db-02">note-db-02</a><time datetime="2025-03-14T01:54:20.000Z" title="Created 2025-03-14 09:54:20">2025-03-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By ggengx</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.3</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
