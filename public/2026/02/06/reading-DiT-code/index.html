@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>reading DiT code | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Time Embeddingwe try to enrich the information of a time scalar! if we dont do so, the info that the model can get from the time scalar is poor. 123456def forward(self, t):        # t_freq [batch, ...">
+<meta property="og:type" content="article">
+<meta property="og:title" content="reading DiT code">
+<meta property="og:url" content="http://example.com/2026/02/06/reading-DiT-code/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Time Embeddingwe try to enrich the information of a time scalar! if we dont do so, the info that the model can get from the time scalar is poor. 123456def forward(self, t):        # t_freq [batch, ...">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-02-05T19:28:36.000Z">
+<meta property="article:modified_time" content="2026-02-06T11:18:59.859Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-reading-DiT-code" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/02/06/reading-DiT-code/" class="article-date">
+  <time class="dt-published" datetime="2026-02-05T19:28:36.000Z" itemprop="datePublished">2026-02-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      reading DiT code
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Time-Embedding"><a href="#Time-Embedding" class="headerlink" title="Time Embedding"></a>Time Embedding</h1><p>we try to enrich the information of a time scalar!</p>
+<p>if we dont do so, the info that the model can get from the time scalar is poor.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, t</span>):</span><br><span class="line">        <span class="comment"># t_freq [batch, ..., t, dim]</span></span><br><span class="line">        t_freq = <span class="variable language_">self</span>.timestep_embedding(t, <span class="variable language_">self</span>.frequency_embedding_size)</span><br><span class="line">        t_emb = <span class="variable language_">self</span>.mlp(t_freq)</span><br><span class="line">        <span class="comment"># t_emb [batch, ..., t, hidden]</span></span><br><span class="line">        <span class="keyword">return</span> t_emb</span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>t</code> 其实就是 <code>[batch, ]</code></p>
+<p>like <code>[4,4,4,4,4,4,...]</code> </p>
+<p><code>timestep_embedding</code> using sin and cos to encode the number</p>
+<p>code is like:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">timestep_embedding</span>(<span class="params">t, dim, max_period=<span class="number">10000</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        Create sinusoidal timestep embeddings.</span></span><br><span class="line"><span class="string">        :param t: a 1-D Tensor of N indices, one per batch element.</span></span><br><span class="line"><span class="string">                          These may be fractional.</span></span><br><span class="line"><span class="string">        :param dim: the dimension of the output.</span></span><br><span class="line"><span class="string">        :param max_period: controls the minimum frequency of the embeddings.</span></span><br><span class="line"><span class="string">        :return: an (N, D) Tensor of positional embeddings.</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment"># https://github.com/openai/glide-text2im/blob/main/glide_text2im/nn.py</span></span><br><span class="line">        half = dim // <span class="number">2</span></span><br><span class="line">        <span class="comment"># freqs = exp(-log(max_period) * [0, ..., half - 1] / half)</span></span><br><span class="line">        <span class="comment"># [dim // 2]</span></span><br><span class="line">        freqs = torch.exp(</span><br><span class="line">            -math.log(max_period) * torch.arange(start=<span class="number">0</span>, end=half, dtype=torch.float32) / half</span><br><span class="line">        ).to(device=t.device)</span><br><span class="line">        <span class="comment"># t 应该是位置信息 [batch, ..., t, 1]</span></span><br><span class="line">        <span class="comment"># freqs [1, dim // 2]</span></span><br><span class="line">        <span class="comment"># args -&gt; [batch, ..., t, dim // 2]</span></span><br><span class="line">        args = t[:, <span class="literal">None</span>].<span class="built_in">float</span>() * freqs[<span class="literal">None</span>]</span><br><span class="line">        embedding = torch.cat([torch.cos(args), torch.sin(args)], dim=-<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> dim % <span class="number">2</span>:</span><br><span class="line">            embedding = torch.cat([embedding, torch.zeros_like(embedding[:, :<span class="number">1</span>])], dim=-<span class="number">1</span>)</span><br><span class="line">        <span class="comment"># embedding -&gt; [batch, ..., t, dim]</span></span><br><span class="line">        <span class="keyword">return</span> embedding</span><br></pre></td></tr></table></figure>
+
+<p>after the <code>timestep_embedding</code> we got the torch like [batch, dim]</p>
+<p>after the mlp, we got [batch, hidden]</p>
+<p>that is, TimestepEmbedder change from  <code>[batch]</code> to.<code>[batch, hidden]</code></p>
+<h1 id="LabelEmbedder"><a href="#LabelEmbedder" class="headerlink" title="LabelEmbedder"></a>LabelEmbedder</h1><p>we are using <strong>Classifier-Free Guidance (CFG)</strong> </p>
+<p>先考虑条件生成，模型有时候的生成结果和条件拟合的不够好。比如生成的图片结果和你的 <code>text prompt</code> 在语义上靠的还不够近。这时候，你希望生成的结果再靠近条件一点，和条件更加贴合！</p>
+<p>对于带条件的生成，我们往往需要先训练一个 Classifier，它的作用是对于给定的图像，输出它的分类类别。训练好了以后，他就有了看图的能力。</p>
+<p>在扩散的过程中，每次 sample 一个噪音，使用Classifier对 input 求梯度，用这个梯度去 modify sample出来的噪音，给这个noise以引导。然后用这个noise去更新 <code>x</code> </p>
+<p>使用CFG就不用一个额外的classfier了。训练的时候，他会随机的丢弃标签，进行无标签的生成</p>
+<p>形式化来讲，每次的输入是一个<br>$$<br>&lt;x_t,t,c&gt;<br>$$<br><strong>训练时：</strong></p>
+<p>我们有概率地（<code>p=0.1~0.2</code>）令<br>$$<br>c &#x3D; \empty<br>$$<br> 这样模型同时学会了无条件生成和带条件生成</p>
+<p><strong>推理时</strong></p>
+<p>走两次</p>
+<ol>
+<li><p>$$<br>input &#x3D; &lt;x_t,t, c&gt;<br>$$</p>
+</li>
+<li><p>$$<br>input&#x3D;&lt;x_t,t,\empty&gt;<br>$$</p>
+</li>
+</ol>
+<p>然后两个结果进行综合<br>$$<br>\hat{\epsilon}&#x3D;s\epsilon_{conditioned}+(1-s)\epsilon_{unconditioned}<br>$$<br>一般<br>$$<br>s &#x3D; [5, 7]<br>$$<br>相当于有了一个 $\epsilon_{uncond}$ 又有了一个 $\epsilon_{cond}$  两者做差你就知道 $cond$ 的方向在哪里了！</p>
+<p><code>LabelEmbedder</code> 的 <code>__init__</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_classes, hidden_size, dropout_prob</span>):</span><br></pre></td></tr></table></figure>
+
+<p>这里 <code>dropout_prob</code> 应该是随机丢掉分类</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2026/02/06/reading-DiT-code/" data-id="cmlaslr540002his621i1etn9" data-title="reading DiT code" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2026/02/03/init/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">init</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/02/">February 2026</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/02/06/reading-DiT-code/">reading DiT code</a>
+          </li>
+        
+          <li>
+            <a href="/2026/02/03/init/">init</a>
+          </li>
+        
+          <li>
+            <a href="/2026/02/03/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
