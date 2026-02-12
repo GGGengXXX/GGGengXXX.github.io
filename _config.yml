@@ -96,7 +96,7 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: fluid
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
@@ -104,3 +104,10 @@ deploy:
   type: git
   repo: https://github.com/GGGengXXX/GGGengXXX.github.io.git
   branch: main  # 或者是 master，取决于你 GitHub 默认显示的那个分支
+
+# 注意：前面不能有任何空格，必须顶格
+math:
+  enable: true
+  specific: false
+  engine: katex
+
