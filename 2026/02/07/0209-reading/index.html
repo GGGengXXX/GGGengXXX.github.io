@@ -27,7 +27,7 @@
 <meta property="og:description" content="Pre knowledge 光流和PointTracking ：光流指的是在相邻的两张图片 点 (u1,v1)(u_1,v_1)(u1​,v1​) 到 点 (u2,v2)(u_2,v_2)(u2​,v2​) 所组成的矢量，而pointTracking(2D)指的是更长时的，一个点在所有帧上的轨迹，而不只是关注相邻的两帧。  4D表征： PointWorld：3D点流，分为状态和动作，状态使用场景">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2026-02-07T13:09:09.000Z">
-<meta property="article:modified_time" content="2026-02-14T16:19:13.354Z">
+<meta property="article:modified_time" content="2026-02-15T09:08:07.960Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -228,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.7k words
+          5.1k words
         
       </span>
     
@@ -239,7 +239,7 @@
         
         
         
-          40 mins
+          43 mins
         
       </span>
     
@@ -481,6 +481,13 @@ c-16-25.333-24-45-24-59z'/></svg></span></span></span></span></span></span></spa
 <p>点云的运动序列</p>
 </li>
 </ul>
+<p><strong>overview：</strong></p>
+<p>首先训练 <code>encoder</code> 和 <code>decoder</code> 实现将一个运动序列编码为 <code>latent</code> 在 decode 出来</p>
+<p>这里没有使用 bone，需要的是mesh 网格；</p>
+<p>什么是 <code>mesh</code> 就是在 pointCloud 的基础上，添加三角面片，有了这些三角面片实际上相当于把孤立的点云表示建模成了类似 graph 的结构</p>
+<p>然后使用 DiT 去生成运动序列的 <code>latent</code> 然后再使用训练好的 <code>decoder</code> 就好了</p>
+<p>需要用 text 去引导diffusion 的过程，这里使用的是 MMDiT，Rectified Flow</p>
+<p>训练 <code>MMDiT</code> 生成从 noise 到生成目标的方向向量</p>
 <h4 id="dymeshvae"><a class="markdownIt-Anchor" href="#dymeshvae"></a> DyMeshVAE</h4>
 <p><strong>encode</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">encode</span>(<span class="hljs-params">self, pc, faces=<span class="hljs-literal">None</span>, valid_mask=<span class="hljs-literal">None</span>, adj_matrix=<span class="hljs-literal">None</span></span>):<br>        <span class="hljs-comment"># pc 维度: [B, T, N, 3] (输入动态序列)</span><br>        B, T, N, D = pc.shape<br>        device = pc.device<br></code></pre></td></tr></table></figure>
@@ -608,6 +615,44 @@ c-16-25.333-24-45-24-59z'/></svg></span></span></span></span></span></span></spa
 <li>骨骼运动序列 4D  pose sequence</li>
 <li>RGB ego 视频 view sequence</li>
 </ul>
+<h4 id="modality-tokenization-不同模态怎么做tokenization"><a class="markdownIt-Anchor" href="#modality-tokenization-不同模态怎么做tokenization"></a> Modality Tokenization 不同模态怎么做tokenization</h4>
+<p><strong>视频</strong> 使用 3D VAE，使用 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>8</mn><mo>×</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">4\times 8\times 8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">8</span></span></span></span> 的压缩率</p>
+<blockquote>
+<p><code>3D VAE</code> 传统的 VAE 处理二维图像，3D考虑了时间维度</p>
+</blockquote>
+<p><strong>文本</strong> 使用 <code>T5-XXL</code></p>
+<h5 id="motion-representation-动作表征"><a class="markdownIt-Anchor" href="#motion-representation-动作表征"></a> motion representation 动作表征</h5>
+<blockquote>
+<p>传统表征：过参数化，记录七个参数</p>
+<ol>
+<li>根部转圈的角速度</li>
+<li>走位的速度，根部的平面线速度</li>
+<li>根部的高度(屁股的高度)</li>
+<li>关节的位置（除了屁股之外，其他关节相对于屁股的位置）</li>
+<li>局部关节的速度</li>
+<li>局部关节的旋转</li>
+<li>脚与地面是否接触</li>
+</ol>
+</blockquote>
+<p>传统表示难以做到与 <code>ego view</code> 做对齐，需要 <code>head-centric</code> 以头部为中心</p>
+<blockquote>
+<ol>
+<li>头部的移动</li>
+<li>头部的速度</li>
+<li>头部的旋转角度</li>
+<li>头部的旋转速度</li>
+<li>关节的位置  =&gt; 关节是以头为参考系的相对表示</li>
+<li>关节的速度</li>
+<li>关节的旋转</li>
+</ol>
+</blockquote>
+<h5 id="motion-tokenization"><a class="markdownIt-Anchor" href="#motion-tokenization"></a> motion tokenization</h5>
+<blockquote>
+<p>causal 1D CNN 处理音频或着视频生成</p>
+<p>普通的 <code>CNN</code>  =&gt; 模型可以看到 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>−</mo><mn>1</mn><mo separator="true">,</mo><mi>t</mi><mo separator="true">,</mo><mi>t</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">t-1, t, t+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69841em;vertical-align:-0.08333em;"></span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span> 但是在生成任务中，看不到未来的数据！</p>
+<p>做法：</p>
+<p>左侧填充 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span> 个 0， 每次运算只涉及 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>−</mo><mi>k</mi><mo>+</mo><mn>1</mn><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><mi>t</mi></mrow><annotation encoding="application/x-tex">t-k+1, ... , t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69841em;vertical-align:-0.08333em;"></span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">t</span></span></span></span> 的数据</p>
+</blockquote>
 <p>我们想要做的是可交互的4D生成。从具体的任务而言，包括应用于具身的任务 一般场景的4D重建 主体的运动4D生成</p>
 <p>具身的任务是指对场景，机器人等做4D的表征，让模型了解这一个场景，然后做出决策，例如Dream2Flow、PointWorld</p>
 <p>一般场景的4D重建包括 Any4D、D4RT、TrackingWorld。</p>
