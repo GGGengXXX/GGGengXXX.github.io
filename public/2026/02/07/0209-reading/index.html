@@ -27,7 +27,7 @@
 <meta property="og:description" content="Pre knowledge 光流和PointTracking ：光流指的是在相邻的两张图片 点 (u1,v1)(u_1,v_1)(u1​,v1​) 到 点 (u2,v2)(u_2,v_2)(u2​,v2​) 所组成的矢量，而pointTracking(2D)指的是更长时的，一个点在所有帧上的轨迹，而不只是关注相邻的两帧。  4D表征： PointWorld：3D点流，分为状态和动作，状态使用场景">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2026-02-07T13:09:09.000Z">
-<meta property="article:modified_time" content="2026-02-12T06:10:20.381Z">
+<meta property="article:modified_time" content="2026-02-15T09:08:07.960Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -228,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4k words
+          5.1k words
         
       </span>
     
@@ -239,7 +239,7 @@
         
         
         
-          34 mins
+          43 mins
         
       </span>
     
@@ -481,6 +481,13 @@ c-16-25.333-24-45-24-59z'/></svg></span></span></span></span></span></span></spa
 <p>点云的运动序列</p>
 </li>
 </ul>
+<p><strong>overview：</strong></p>
+<p>首先训练 <code>encoder</code> 和 <code>decoder</code> 实现将一个运动序列编码为 <code>latent</code> 在 decode 出来</p>
+<p>这里没有使用 bone，需要的是mesh 网格；</p>
+<p>什么是 <code>mesh</code> 就是在 pointCloud 的基础上，添加三角面片，有了这些三角面片实际上相当于把孤立的点云表示建模成了类似 graph 的结构</p>
+<p>然后使用 DiT 去生成运动序列的 <code>latent</code> 然后再使用训练好的 <code>decoder</code> 就好了</p>
+<p>需要用 text 去引导diffusion 的过程，这里使用的是 MMDiT，Rectified Flow</p>
+<p>训练 <code>MMDiT</code> 生成从 noise 到生成目标的方向向量</p>
 <h4 id="dymeshvae"><a class="markdownIt-Anchor" href="#dymeshvae"></a> DyMeshVAE</h4>
 <p><strong>encode</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">encode</span>(<span class="hljs-params">self, pc, faces=<span class="hljs-literal">None</span>, valid_mask=<span class="hljs-literal">None</span>, adj_matrix=<span class="hljs-literal">None</span></span>):<br>        <span class="hljs-comment"># pc 维度: [B, T, N, 3] (输入动态序列)</span><br>        B, T, N, D = pc.shape<br>        device = pc.device<br></code></pre></td></tr></table></figure>
@@ -570,6 +577,81 @@ c-16-25.333-24-45-24-59z'/></svg></span></span></span></span></span></span></spa
 <li>Text -&gt; image</li>
 </ul>
 <p>的query</p>
+</blockquote>
+<p><strong>整体结构</strong></p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs tex">输入: x (动作Latent噪声) [B,K,C], t (时间步) [B], texts (文本列表)<br>                          │<br>          ┌───────────────┼───────────────┐<br>          ▼               ▼               ▼<br>    timestep<span class="hljs-built_in">_</span>embedding  CLIP Text       input<span class="hljs-built_in">_</span>proj<br>    + time<span class="hljs-built_in">_</span>embed(MLP)   Encoder         (Linear)<br>          │             + clip<span class="hljs-built_in">_</span>token<span class="hljs-built_in">_</span>mlp      │<br>          ▼               ▼               ▼<br>        t<span class="hljs-built_in">_</span>emb          text<span class="hljs-built_in">_</span>embed          h<br>       [B, W]          [B, 77, W]       [B, K, W]<br>          │               │               │<br>          └───────┬───────┘               │<br>                  ▼                       ▼<br>            ┌─────────────────────────────────┐<br>            │   Transformer<span class="hljs-built_in">_</span>cogx (×N layers)  │<br>            │   CogXAttentionBlock:           │<br>            │     - AdaLN-Zero (x <span class="hljs-built_in">&amp;</span> text)     │<br>            │     - Joint Self-Attention       │<br>            │     - Joint MLP                  │<br>            └─────────────────────────────────┘<br>                          │<br>                    output<span class="hljs-built_in">_</span>proj → 预测噪声/速度场 [B, K, C]<br></code></pre></td></tr></table></figure>
+<p>这一部分考虑了文本信息和静态结构，输出是一个速度场，用来为扩散过程提供指导。</p>
+<p>每一步扩散都会调用这个 <code>MMDiT</code> 得到引导</p>
+<h4 id="diffusion-pipeline"><a class="markdownIt-Anchor" href="#diffusion-pipeline"></a> <strong>Diffusion Pipeline</strong></h4>
+<p>Training</p>
+<p>得到时间步</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># ---- 1. 采样时间步 ----</span><br>    times = torch.rand(x_start.shape[<span class="hljs-number">0</span>], device=x_start.device)  <span class="hljs-comment"># [B] — t ~ U(0,1)</span><br>    padded_times = append_dims(times, x_start.ndim - <span class="hljs-number">1</span>)           <span class="hljs-comment"># [B, 1, 1] — 扩展维度以广播</span><br>    <br>    <span class="hljs-comment"># ---- 2. 构造加噪样本 ----</span><br>    t = cosmap(padded_times)                           <span class="hljs-comment"># [B, 1, 1] — cosine 重映射后的时间步</span><br>    x_t = t * x_start + (<span class="hljs-number">1.</span> - t) * noise              <span class="hljs-comment"># [B, K, C] — 线性插值 (t=1→数据, t=0→噪声)</span><br>    <br>    <span class="hljs-comment"># ---- 3. 保护 f0 通道: 用原始 x_start 的 f0 替换加噪版本 ----</span><br>    <span class="hljs-comment"># x_start[:, :, :f0_channels] → [B, K, f0] 静态形状，不加噪</span><br>    <span class="hljs-comment"># x_t[:, :, f0_channels:]     → [B, K, ft] 动态运动，已加噪</span><br>    x_t = torch.cat([x_start[:, :, :f0_channels], x_t[:, :, f0_channels:]], dim=-<span class="hljs-number">1</span>)  <span class="hljs-comment"># [B, K, C]</span><br></code></pre></td></tr></table></figure>
+<p>其中 <code>cosmap</code> 会做时间步的重映射，中间的时间步 例如 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">t=0.5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61508em;vertical-align:0em;"></span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">5</span></span></span></span> 会被采样得更多</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">x_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 会得到 静态形状 + 动态运动的混合张量，只有动态运动的部分混上噪声</p>
+<p>然后计算 <code>flow</code> 也就是从 <code>noise</code> 到 <code>x_start</code> 的直线方向</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># ---- 4. 计算目标 flow ----</span><br>    flow = x_start - noise     <br></code></pre></td></tr></table></figure>
+<p>然后使用 <code>DyMeshMMDiT</code> 考虑 <code>text</code> 、 运动轨迹，期望得到的是从 <code>noise</code> 到 <code>x_start</code> 或者预测结果的 方向向量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># ---- 5. 模型前向传播 ----</span><br><span class="hljs-comment"># model = DyMeshMMDiT, 调用其 forward(x_t, t, texts=...)</span><br>model_output = model(                              <span class="hljs-comment"># [B, K, C] — 模型预测的 flow 或 noise</span><br>    x_t,                                           <span class="hljs-comment"># [B, K, C] — 加噪样本 (f0 未加噪)</span><br>    t.squeeze(-<span class="hljs-number">1</span>).squeeze(-<span class="hljs-number">1</span>),                     <span class="hljs-comment"># [B]       — 时间步 (去掉扩展的维度)</span><br>    **model_kwargs<br>)<br></code></pre></td></tr></table></figure>
+<p>然后把 <code>model_output</code> 和实际得到的 <code>flow</code> 去做 <code>mse</code> 得到 <code>loss</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># ---- 6. 选择预测目标 ----</span><br><span class="hljs-keyword">if</span> predict == <span class="hljs-string">&#x27;flow&#x27;</span>:<br>    target = flow                                  <span class="hljs-comment"># [B, K, C] — 目标: x_start - noise</span><br><span class="hljs-keyword">elif</span> predict == <span class="hljs-string">&#x27;noise&#x27;</span>:<br>    target = noise                                 <span class="hljs-comment"># [B, K, C] — 目标: 噪声本身</span><br><span class="hljs-keyword">else</span>:<br>    <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">f&#x27;unknown objective <span class="hljs-subst">&#123;predict&#125;</span>&#x27;</span>)<br><br><span class="hljs-comment"># ---- 7. 计算 MSE 损失 (仅在 ft 动态通道上) ----</span><br>ft_channels = x_start.shape[-<span class="hljs-number">1</span>] - f0_channels      <span class="hljs-comment"># ft 通道数 = C - f0</span><br><span class="hljs-comment"># 只取最后 ft_channels 个通道计算损失，忽略 f0 (静态形状不需要预测)</span><br>terms[<span class="hljs-string">&quot;mse&quot;</span>] = mean_flat(                          <span class="hljs-comment"># [B] — 逐样本 MSE</span><br>    (target[:, :, -ft_channels:] - model_output[:, :, -ft_channels:]) ** <span class="hljs-number">2</span><br>)                                                  <span class="hljs-comment"># target/output 切片: [B, K, ft]</span><br><br>terms[<span class="hljs-string">&quot;loss&quot;</span>] = terms[<span class="hljs-string">&quot;mse&quot;</span>]                       <span class="hljs-comment"># [B]</span><br><br><span class="hljs-keyword">return</span> terms<br></code></pre></td></tr></table></figure>
+<p>训练的结果就是 <code>DyMeshMMDiT</code> 学会了生成 <code>flow</code></p>
+<blockquote>
+<p>Flow =&gt;也就是 <code>noise</code> 到目标 <code>latent</code> （运动轨迹）的直线方向。</p>
+</blockquote>
+<h3 id="egotwin"><a class="markdownIt-Anchor" href="#egotwin"></a> EgoTwin</h3>
+<p>标题：EgoTwin: Dreaming Body and View in First Person</p>
+<p>生成第一人称视角的视频</p>
+<p>有两个<strong>对齐</strong>的挑战，一个是相机轨迹(决定了相机拍到什么)和人体的头部运动的对齐</p>
+<p>二是人体与环境交互的动作和环境变化的对齐（因果交互）</p>
+<h4 id="问题定义"><a class="markdownIt-Anchor" href="#问题定义"></a> 问题定义</h4>
+<p>输入</p>
+<ul>
+<li>骨骼序列</li>
+<li>RGB ego View 首帧</li>
+<li>Text Prompt</li>
+</ul>
+<p>输出</p>
+<ul>
+<li>骨骼运动序列 4D  pose sequence</li>
+<li>RGB ego 视频 view sequence</li>
+</ul>
+<h4 id="modality-tokenization-不同模态怎么做tokenization"><a class="markdownIt-Anchor" href="#modality-tokenization-不同模态怎么做tokenization"></a> Modality Tokenization 不同模态怎么做tokenization</h4>
+<p><strong>视频</strong> 使用 3D VAE，使用 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>8</mn><mo>×</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">4\times 8\times 8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">8</span></span></span></span> 的压缩率</p>
+<blockquote>
+<p><code>3D VAE</code> 传统的 VAE 处理二维图像，3D考虑了时间维度</p>
+</blockquote>
+<p><strong>文本</strong> 使用 <code>T5-XXL</code></p>
+<h5 id="motion-representation-动作表征"><a class="markdownIt-Anchor" href="#motion-representation-动作表征"></a> motion representation 动作表征</h5>
+<blockquote>
+<p>传统表征：过参数化，记录七个参数</p>
+<ol>
+<li>根部转圈的角速度</li>
+<li>走位的速度，根部的平面线速度</li>
+<li>根部的高度(屁股的高度)</li>
+<li>关节的位置（除了屁股之外，其他关节相对于屁股的位置）</li>
+<li>局部关节的速度</li>
+<li>局部关节的旋转</li>
+<li>脚与地面是否接触</li>
+</ol>
+</blockquote>
+<p>传统表示难以做到与 <code>ego view</code> 做对齐，需要 <code>head-centric</code> 以头部为中心</p>
+<blockquote>
+<ol>
+<li>头部的移动</li>
+<li>头部的速度</li>
+<li>头部的旋转角度</li>
+<li>头部的旋转速度</li>
+<li>关节的位置  =&gt; 关节是以头为参考系的相对表示</li>
+<li>关节的速度</li>
+<li>关节的旋转</li>
+</ol>
+</blockquote>
+<h5 id="motion-tokenization"><a class="markdownIt-Anchor" href="#motion-tokenization"></a> motion tokenization</h5>
+<blockquote>
+<p>causal 1D CNN 处理音频或着视频生成</p>
+<p>普通的 <code>CNN</code>  =&gt; 模型可以看到 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>−</mo><mn>1</mn><mo separator="true">,</mo><mi>t</mi><mo separator="true">,</mo><mi>t</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">t-1, t, t+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69841em;vertical-align:-0.08333em;"></span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span> 但是在生成任务中，看不到未来的数据！</p>
+<p>做法：</p>
+<p>左侧填充 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span> 个 0， 每次运算只涉及 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>−</mo><mi>k</mi><mo>+</mo><mn>1</mn><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><mi>t</mi></mrow><annotation encoding="application/x-tex">t-k+1, ... , t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69841em;vertical-align:-0.08333em;"></span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">t</span></span></span></span> 的数据</p>
 </blockquote>
 <p>我们想要做的是可交互的4D生成。从具体的任务而言，包括应用于具身的任务 一般场景的4D重建 主体的运动4D生成</p>
 <p>具身的任务是指对场景，机器人等做4D的表征，让模型了解这一个场景，然后做出决策，例如Dream2Flow、PointWorld</p>

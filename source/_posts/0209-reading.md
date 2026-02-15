@@ -258,6 +258,22 @@ $$
 
 - 点云的运动序列
 
+**overview：**
+
+首先训练 `encoder` 和 `decoder` 实现将一个运动序列编码为 `latent` 在 decode 出来
+
+这里没有使用 bone，需要的是mesh 网格；
+
+什么是 `mesh` 就是在 pointCloud 的基础上，添加三角面片，有了这些三角面片实际上相当于把孤立的点云表示建模成了类似 graph 的结构
+
+然后使用 DiT 去生成运动序列的 `latent` 然后再使用训练好的 `decoder` 就好了
+
+需要用 text 去引导diffusion 的过程，这里使用的是 MMDiT，Rectified Flow
+
+训练 `MMDiT` 生成从 noise 到生成目标的方向向量
+
+
+
 #### DyMeshVAE
 
 **encode**
@@ -530,7 +546,170 @@ return outputs # 返回完整的动态序列 (不含第一帧，或根据实现�
 >
 > 的query
 
+**整体结构**
 
+```tex
+输入: x (动作Latent噪声) [B,K,C], t (时间步) [B], texts (文本列表)
+                          │
+          ┌───────────────┼───────────────┐
+          ▼               ▼               ▼
+    timestep_embedding  CLIP Text       input_proj
+    + time_embed(MLP)   Encoder         (Linear)
+          │             + clip_token_mlp      │
+          ▼               ▼               ▼
+        t_emb          text_embed          h
+       [B, W]          [B, 77, W]       [B, K, W]
+          │               │               │
+          └───────┬───────┘               │
+                  ▼                       ▼
+            ┌─────────────────────────────────┐
+            │   Transformer_cogx (×N layers)  │
+            │   CogXAttentionBlock:           │
+            │     - AdaLN-Zero (x & text)     │
+            │     - Joint Self-Attention       │
+            │     - Joint MLP                  │
+            └─────────────────────────────────┘
+                          │
+                    output_proj → 预测噪声/速度场 [B, K, C]
+```
+
+这一部分考虑了文本信息和静态结构，输出是一个速度场，用来为扩散过程提供指导。
+
+每一步扩散都会调用这个 `MMDiT` 得到引导
+
+#### **Diffusion Pipeline**
+
+Training
+
+得到时间步
+
+```python
+# ---- 1. 采样时间步 ----
+    times = torch.rand(x_start.shape[0], device=x_start.device)  # [B] — t ~ U(0,1)
+    padded_times = append_dims(times, x_start.ndim - 1)           # [B, 1, 1] — 扩展维度以广播
+    
+    # ---- 2. 构造加噪样本 ----
+    t = cosmap(padded_times)                           # [B, 1, 1] — cosine 重映射后的时间步
+    x_t = t * x_start + (1. - t) * noise              # [B, K, C] — 线性插值 (t=1→数据, t=0→噪声)
+    
+    # ---- 3. 保护 f0 通道: 用原始 x_start 的 f0 替换加噪版本 ----
+    # x_start[:, :, :f0_channels] → [B, K, f0] 静态形状，不加噪
+    # x_t[:, :, f0_channels:]     → [B, K, ft] 动态运动，已加噪
+    x_t = torch.cat([x_start[:, :, :f0_channels], x_t[:, :, f0_channels:]], dim=-1)  # [B, K, C]
+```
+
+其中 `cosmap` 会做时间步的重映射，中间的时间步 例如 $t=0.5$ 会被采样得更多
+
+$x_t$ 会得到 静态形状 + 动态运动的混合张量，只有动态运动的部分混上噪声
+
+然后计算 `flow` 也就是从 `noise` 到 `x_start` 的直线方向
+
+```python
+# ---- 4. 计算目标 flow ----
+    flow = x_start - noise     
+```
+
+然后使用 `DyMeshMMDiT` 考虑 `text` 、 运动轨迹，期望得到的是从 `noise` 到 `x_start` 或者预测结果的 方向向量
+
+```python
+# ---- 5. 模型前向传播 ----
+# model = DyMeshMMDiT, 调用其 forward(x_t, t, texts=...)
+model_output = model(                              # [B, K, C] — 模型预测的 flow 或 noise
+    x_t,                                           # [B, K, C] — 加噪样本 (f0 未加噪)
+    t.squeeze(-1).squeeze(-1),                     # [B]       — 时间步 (去掉扩展的维度)
+    **model_kwargs
+)
+```
+
+然后把 `model_output` 和实际得到的 `flow` 去做 `mse` 得到 `loss`
+
+```python
+# ---- 6. 选择预测目标 ----
+if predict == 'flow':
+    target = flow                                  # [B, K, C] — 目标: x_start - noise
+elif predict == 'noise':
+    target = noise                                 # [B, K, C] — 目标: 噪声本身
+else:
+    raise ValueError(f'unknown objective {predict}')
+
+# ---- 7. 计算 MSE 损失 (仅在 ft 动态通道上) ----
+ft_channels = x_start.shape[-1] - f0_channels      # ft 通道数 = C - f0
+# 只取最后 ft_channels 个通道计算损失，忽略 f0 (静态形状不需要预测)
+terms["mse"] = mean_flat(                          # [B] — 逐样本 MSE
+    (target[:, :, -ft_channels:] - model_output[:, :, -ft_channels:]) ** 2
+)                                                  # target/output 切片: [B, K, ft]
+
+terms["loss"] = terms["mse"]                       # [B]
+
+return terms
+```
+
+训练的结果就是 `DyMeshMMDiT` 学会了生成 `flow` 
+
+> Flow =>也就是 `noise` 到目标 `latent` （运动轨迹）的直线方向。
+
+### EgoTwin
+
+标题：EgoTwin: Dreaming Body and View in First Person
+
+生成第一人称视角的视频
+
+有两个**对齐**的挑战，一个是相机轨迹(决定了相机拍到什么)和人体的头部运动的对齐
+
+二是人体与环境交互的动作和环境变化的对齐（因果交互）
+
+#### 问题定义
+
+输入
+
+- 骨骼序列
+- RGB ego View 首帧
+- Text Prompt
+
+输出
+
+- 骨骼运动序列 4D  pose sequence
+- RGB ego 视频 view sequence
+
+#### Modality Tokenization 不同模态怎么做tokenization
+
+**视频** 使用 3D VAE，使用 $4\times 8\times 8$ 的压缩率
+
+> `3D VAE` 传统的 VAE 处理二维图像，3D考虑了时间维度
+
+**文本** 使用 `T5-XXL` 
+
+##### motion representation 动作表征
+
+> 传统表征：过参数化，记录七个参数
+>
+> 1. 根部转圈的角速度
+> 2. 走位的速度，根部的平面线速度
+> 3. 根部的高度(屁股的高度)
+> 4. 关节的位置（除了屁股之外，其他关节相对于屁股的位置）
+> 5. 局部关节的速度
+> 6. 局部关节的旋转
+> 7. 脚与地面是否接触
+
+传统表示难以做到与 `ego view` 做对齐，需要 `head-centric` 以头部为中心
+
+> 1. 头部的移动
+> 2. 头部的速度
+> 3. 头部的旋转角度
+> 4. 头部的旋转速度
+> 5. 关节的位置  => 关节是以头为参考系的相对表示
+> 6. 关节的速度
+> 7. 关节的旋转
+
+##### motion tokenization
+
+> causal 1D CNN 处理音频或着视频生成
+>
+> 普通的 `CNN`  => 模型可以看到 $t-1, t, t+1$ 但是在生成任务中，看不到未来的数据！
+>
+> 做法：
+>
+> 左侧填充 $k-1$ 个 0， 每次运算只涉及 $t-k+1, ... , t$ 的数据
 
 
 
