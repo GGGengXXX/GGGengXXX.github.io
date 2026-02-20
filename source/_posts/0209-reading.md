@@ -711,6 +711,46 @@ return terms
 >
 > 左侧填充 $k-1$ 个 0， 每次运算只涉及 $t-k+1, ... , t$ 的数据
 
+##### DiT
+
+同样是 `MMDiT` 
+
+对于 `text` 和 `video` 模态，模型的权重使用预训练的 `CogVideoX` 而`motion` 模态只能重新开始了
+
+对 `motion` 做了轻量化处理，只参与前面一半的 `layers` 的transformer block，因为只有这一部分关注动作，对于后面高层的 `layer` 更加关注视频生成的细节，`motion` 的 `branch` 不需要进一步参与了
+
+`text` 和 `video` 模态是混合处理的，可以通过 `projection` 得到 $Q_{vt}, K_{vt}, V_{vt}$ 
+
+然后 `motion` 也可以得到 $Q_m, K_m, V_m$ 
+
+然后拼接在一起得到 $Q,K,V$ 
+
+再做 `self-attention` 然后再分开
+
+**如何做视频和 motion 的对齐？**
+
+正向动力学 => 当前的观察和当前采取的动作共同决定了 未来的观察
+$$
+\{O_i, A_i\}\rightarrow O_{i+1}
+$$
+逆向动力学 => 未来的动作是由未来的观察和当前的观察共同决定的
+$$
+\{O_i,O_{i+1}\}\rightarrow A_{i}
+$$
+其中动作的tokens 更多一点，是video的两倍
+
+根据以上两个公式，在 `attention` 中设置对应的mask
+
+对于某一个 `observation` 
+
+它能看到的action只有前一步的 `actioin` ，由前一步的 `action` 和 前一步的 `observation` 共同决定了下一步的 `observation` 
+
+对于某一个 `action` 
+
+能看到的 observation 只有当前的 `observation` 和下一步的 `observation` 通过逆运动学来决定采取什么 `action` 
+
+### Uni-Inter
+
 
 
 
