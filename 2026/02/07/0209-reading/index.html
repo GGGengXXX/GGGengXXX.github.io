@@ -27,7 +27,7 @@
 <meta property="og:description" content="Pre knowledge 光流和PointTracking ：光流指的是在相邻的两张图片 点 (u1,v1)(u_1,v_1)(u1​,v1​) 到 点 (u2,v2)(u_2,v_2)(u2​,v2​) 所组成的矢量，而pointTracking(2D)指的是更长时的，一个点在所有帧上的轨迹，而不只是关注相邻的两帧。  4D表征： PointWorld：3D点流，分为状态和动作，状态使用场景">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2026-02-07T13:09:09.000Z">
-<meta property="article:modified_time" content="2026-02-20T04:43:26.314Z">
+<meta property="article:modified_time" content="2026-02-26T01:40:19.724Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -228,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.5k words
+          5.6k words
         
       </span>
     
@@ -239,7 +239,7 @@
         
         
         
-          46 mins
+          47 mins
         
       </span>
     
@@ -675,6 +675,20 @@ c-16-25.333-24-45-24-59z'/></svg></span></span></span></span></span></span></spa
 <p>对于某一个 <code>action</code></p>
 <p>能看到的 observation 只有当前的 <code>observation</code> 和下一步的 <code>observation</code> 通过逆运动学来决定采取什么 <code>action</code></p>
 <h3 id="uni-inter"><a class="markdownIt-Anchor" href="#uni-inter"></a> Uni-Inter</h3>
+<p>title: Uni-Inter: Unifying <strong>3D Human Motion Synthesis</strong> Across Diverse Interaction Contexts</p>
+<h4 id="模型定义"><a class="markdownIt-Anchor" href="#模型定义"></a> 模型定义</h4>
+<p>生成一个 <code>motion sequence</code></p>
+<p>aligns with</p>
+<ul>
+<li>semantics of text （文本 prompt）</li>
+<li>the observed context（4D表示）
+<ul>
+<li>比如任务是人和物体的交互，捡起一个杯子，那么 context 就是杯子的运动 4D 序列</li>
+<li>比如任务是人和人的交互，接住另一个人的球，那么 context 就是另一个人的手部动作和球的抛物线</li>
+<li>输入形式为体素格式，一般不包含主体，只包含与主体进行交互的物体和环境或者其他主体</li>
+</ul>
+</li>
+</ul>
 <p>我们想要做的是可交互的4D生成。从具体的任务而言，包括应用于具身的任务 一般场景的4D重建 主体的运动4D生成</p>
 <p>具身的任务是指对场景，机器人等做4D的表征，让模型了解这一个场景，然后做出决策，例如Dream2Flow、PointWorld</p>
 <p>一般场景的4D重建包括 Any4D、D4RT、TrackingWorld。</p>
