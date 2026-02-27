@@ -1,7 +1,7 @@
 ---
 title: reading DiT code
 date: 2026-02-06 03:28:36
-tags:
+tags: paper
 ---
 
 # Time Embedding

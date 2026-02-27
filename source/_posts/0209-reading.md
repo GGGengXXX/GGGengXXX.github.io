@@ -751,6 +751,22 @@ $$
 
 ### Uni-Inter
 
+title: Uni-Inter: Unifying **3D Human Motion Synthesis** Across Diverse Interaction Contexts
+
+#### 模型定义
+
+生成一个 `motion sequence` 
+
+aligns with
+
+-  semantics of text （文本 prompt）
+- the observed context（4D表示）
+  - 比如任务是人和物体的交互，捡起一个杯子，那么 context 就是杯子的运动 4D 序列
+  - 比如任务是人和人的交互，接住另一个人的球，那么 context 就是另一个人的手部动作和球的抛物线
+  - 输入形式为体素格式，一般不包含主体，只包含与主体进行交互的物体和环境或者其他主体
+
+
+
 
 
 
