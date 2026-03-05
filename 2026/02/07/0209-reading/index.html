@@ -27,7 +27,7 @@
 <meta property="og:description" content="Pre knowledge 光流和PointTracking ：光流指的是在相邻的两张图片 点 (u1,v1)(u_1,v_1)(u1​,v1​) 到 点 (u2,v2)(u_2,v_2)(u2​,v2​) 所组成的矢量，而pointTracking(2D)指的是更长时的，一个点在所有帧上的轨迹，而不只是关注相邻的两帧。  4D表征： PointWorld：3D点流，分为状态和动作，状态使用场景">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2026-02-07T13:09:09.000Z">
-<meta property="article:modified_time" content="2026-03-03T14:51:16.677Z">
+<meta property="article:modified_time" content="2026-03-05T13:00:12.009Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -228,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.8k words
+          5.9k words
         
       </span>
     
@@ -239,7 +239,7 @@
         
         
         
-          48 mins
+          50 mins
         
       </span>
     
@@ -700,6 +700,16 @@ c-16-25.333-24-45-24-59z'/></svg></span></span></span></span></span></span></spa
 <p>这里<code>人体的表征</code>与 <code>物体和环境</code> 的表征还是存在差异的</p>
 <p>接下来我们把 <code>人体的表征</code> 和 <code>物体和环境</code> 统一表征成为voxel</p>
 <hr />
+<h3 id="egoexo-gen"><a class="markdownIt-Anchor" href="#egoexo-gen"></a> EgoExo-Gen</h3>
+<p>感觉帮助不大？</p>
+<p>从第三人称的视频，生成第一人称的视频</p>
+<p>更多的关注的是手和物体的交互。不需要深度图 也不用相机位姿</p>
+<p>人物并不发生位移，第一视角固定，中间需要借助手和物体的mask</p>
+<p>输入是第三视角的视频，第一视角首帧，文本指令</p>
+<p>两个阶段，先通过 第一视角和第三视角的视频，预测得到第一视角下的手和物体交互mask</p>
+<p>然后根据这个mask，首帧ego-view，text prompt 得到第一视角下的视频</p>
+<h3 id="playerone"><a class="markdownIt-Anchor" href="#playerone"></a> Playerone</h3>
+<p>first realistic world monitor</p>
 <p>我们想要做的是可交互的4D生成。从具体的任务而言，包括应用于具身的任务 一般场景的4D重建 主体的运动4D生成</p>
 <p>具身的任务是指对场景，机器人等做4D的表征，让模型了解这一个场景，然后做出决策，例如Dream2Flow、PointWorld</p>
 <p>一般场景的4D重建包括 Any4D、D4RT、TrackingWorld。</p>
