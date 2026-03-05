@@ -19,21 +19,22 @@
   <meta name="author" content="John Doe">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.  Quic">
+    <meta name="description" content="定义：embodied AI 领域的一类多模态模型 &#x3D;&gt; (models：Vision Language Action) V 模态 和 VLMs 相似，使用一些 vision foundation model 来作为 vision encoder ，从而得到 对于当前 environment 的视觉表征 (pretrained visual representation) L 模态 对 t">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://example.com/2026/02/27/hello-world/index.html">
+<meta property="og:title" content="Paper Reading: A Survey On VLA Models for Embodied AI">
+<meta property="og:url" content="http://example.com/2026/03/04/Paper-Reading-A-Survey-On-VLA-Models-for-Embodied-AI/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.  Quic">
+<meta property="og:description" content="定义：embodied AI 领域的一类多模态模型 &#x3D;&gt; (models：Vision Language Action) V 模态 和 VLMs 相似，使用一些 vision foundation model 来作为 vision encoder ，从而得到 对于当前 environment 的视觉表征 (pretrained visual representation) L 模态 对 t">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2026-02-27T07:54:52.721Z">
-<meta property="article:modified_time" content="2026-02-27T07:54:52.722Z">
+<meta property="article:published_time" content="2026-03-04T02:22:25.000Z">
+<meta property="article:modified_time" content="2026-03-04T13:46:17.251Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="paper reading">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>Hello World - Hexo</title>
+  <title>Paper Reading: A Survey On VLA Models for Embodied AI - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -205,7 +206,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Hello World"></span>
+            <span id="subtitle" data-typed-text="Paper Reading: A Survey On VLA Models for Embodied AI"></span>
           
         </div>
 
@@ -216,8 +217,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-02-27 15:54" pubdate>
-          February 27, 2026 pm
+        <time datetime="2026-03-04 10:22" pubdate>
+          March 4, 2026 am
         </time>
       </span>
     
@@ -228,7 +229,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          18 words
+          524 words
         
       </span>
     
@@ -239,7 +240,7 @@
         
         
         
-          1 mins
+          5 mins
         
       </span>
     
@@ -276,25 +277,79 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Hello World</h1>
+            <h1 id="seo-header">Paper Reading: A Survey On VLA Models for Embodied AI</h1>
             
             
               <div class="markdown-body">
                 
-                <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="quick-start"><a class="markdownIt-Anchor" href="#quick-start"></a> Quick Start</h2>
-<h3 id="create-a-new-post"><a class="markdownIt-Anchor" href="#create-a-new-post"></a> Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo new <span class="hljs-string">&quot;My New Post&quot;</span><br></code></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="run-server"><a class="markdownIt-Anchor" href="#run-server"></a> Run server</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo server<br></code></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="generate-static-files"><a class="markdownIt-Anchor" href="#generate-static-files"></a> Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo generate<br></code></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="deploy-to-remote-sites"><a class="markdownIt-Anchor" href="#deploy-to-remote-sites"></a> Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo deploy<br></code></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+                <hr />
+<p>定义：embodied AI 领域的一类多模态模型 =&gt; (models：Vision Language Action)</p>
+<p>V 模态</p>
+<p>和 VLMs 相似，使用一些 vision foundation model 来作为 vision encoder ，从而得到 对于当前 environment 的视觉表征 (pretrained visual representation)</p>
+<p>L 模态</p>
+<p>对 text 的instruction进行处理，使用LLM，得到 token embeddings</p>
+<p>对视觉的 embeddings + 语言的 embeddings 做 alignment</p>
+<p><strong>BLIP-2</strong>（2023.1 ICML 2023）</p>
+<p>冻结视觉模型和大语言模型，设置一个 <strong>轻量</strong> 的 <strong>可学习的</strong> Q-Former进行桥接</p>
+<blockquote>
+<p>Q-Former</p>
+<p>输入是 learnable Query</p>
+<p>先做 self attention  Q = K = V = learnable Query</p>
+<p>接下来做 cross-attention</p>
+<p>Q = learnable Query, K = V = 视觉编码器的输出</p>
+<p>数据输入是 高维度的视觉表征 + 32 维的 learnable query 输出是 32 维的视觉表征</p>
+<p>实际上是对视觉的表征做了压缩</p>
+<p>训练分为两个阶段</p>
+<p>第一阶段进行 文本 和 图像特征的对齐， 模型学会了在图像中提取出语言的特征</p>
+<p>第二阶段把提取的特征给语言模型，生成文字</p>
+</blockquote>
+<p>再在机器人数据上微调，LLM可以预测 action</p>
+<p>目前关于VLA的研究有三个方向</p>
+<h4 id="components-组件研究"><a class="markdownIt-Anchor" href="#components-组件研究"></a> Components  组件研究</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">组件</th>
+<th style="text-align:left">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">视觉表示</td>
+<td style="text-align:left">教机器人&quot;怎么看&quot;</td>
+</tr>
+<tr>
+<td style="text-align:left">动力学学习</td>
+<td style="text-align:left">教机器人&quot;动作会怎样&quot;</td>
+</tr>
+<tr>
+<td style="text-align:left">世界模型</td>
+<td style="text-align:left">教机器人&quot;预测未来&quot;</td>
+</tr>
+<tr>
+<td style="text-align:left">推理能力</td>
+<td style="text-align:left">教机器人&quot;思考</td>
+</tr>
+</tbody>
+</table>
+<h4 id="low-level-control-底层控制"><a class="markdownIt-Anchor" href="#low-level-control-底层控制"></a> Low-level Control 底层控制</h4>
+<p>输入视觉和语言，决定怎么运动，输出往往是平移 + 旋转</p>
+<h4 id="high-level-planner-高层规划"><a class="markdownIt-Anchor" href="#high-level-planner-高层规划"></a> High-level Planner 高层规划</h4>
+<p>把一个任务进行拆解再执行</p>
+<h2 id="vla-models"><a class="markdownIt-Anchor" href="#vla-models"></a> VLA Models</h2>
+<h3 id="components"><a class="markdownIt-Anchor" href="#components"></a> components</h3>
+<h4 id="rl"><a class="markdownIt-Anchor" href="#rl"></a> RL</h4>
+<p>**DQN 2013 / 2015 **</p>
+<p>输入像素图片 =&gt; 输出 action</p>
+<p>本质是学习一个 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mo stretchy="false">(</mo><mi>s</mi><mo separator="true">,</mo><mi>a</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">Q(s,a)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">Q</span><span class="mopen">(</span><span class="mord mathnormal">s</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">a</span><span class="mclose">)</span></span></span></span>  的函数</p>
+<p>把 4张图片 堆叠在一起 =&gt; 有运动的趋势</p>
+<p>模型架构 CNN + 全连接 =&gt; 输出某个状态下，每个动作对应的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">Q</span></span></span></span> 值</p>
+<p><strong>DT(Decision Transformer)</strong></p>
+<p>序列预测，直接输出动作的序列，不预测Q值了</p>
+<p><strong>RL + LLM</strong></p>
+<p>由LLM来设置奖励函数</p>
+<p>工作流程</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-number">1</span>️⃣ <span class="hljs-keyword">LLM </span>写初始奖励函数<br>   ↓<br><span class="hljs-number">2</span>️⃣ 机器人用这个奖励函数训练<br>   ↓<br><span class="hljs-number">3</span>️⃣ 看训练效果怎么样<br>   ↓<br><span class="hljs-number">4</span>️⃣ 告诉 <span class="hljs-keyword">LLM&quot;哪里不好&quot;</span><br><span class="hljs-keyword"></span>   ↓<br><span class="hljs-number">5</span>️⃣ <span class="hljs-keyword">LLM </span>修改奖励函数<br>   ↓<br><span class="hljs-number">6</span>️⃣ 重复 <span class="hljs-number">2</span><span class="hljs-number">-5</span>，直到效果最好<br><br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -304,6 +359,13 @@
               <div class="post-metas my-3">
   
   
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/paper-reading/" class="print-no-link">#paper reading</a>
+      
+    </div>
+  
 </div>
 
 
@@ -312,8 +374,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Hello World</div>
-      <div>http://example.com/2026/02/27/hello-world/</div>
+      <div>Paper Reading: A Survey On VLA Models for Embodied AI</div>
+      <div>http://example.com/2026/03/04/Paper-Reading-A-Survey-On-VLA-Models-for-Embodied-AI/</div>
     </div>
     <div class="license-meta">
       
@@ -325,7 +387,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>Posted on</div>
-          <div>February 27, 2026</div>
+          <div>March 4, 2026</div>
         </div>
       
       
@@ -357,18 +419,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/02/28/UE5-unrealcv/" title="UE5+unrealcv">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">UE5+unrealcv</span>
-                        <span class="visible-mobile">Previous</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/02/20/C-std-%E5%A4%8D%E5%81%A5/" title="C++ std 复健">
-                        <span class="hidden-mobile">C++ std 复健</span>
+                      <a href="/2026/03/01/%E9%94%AE%E9%BC%A0%E6%93%8D%E7%BA%B5%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7/" title="键鼠操纵的局限性">
+                        <span class="hidden-mobile">键鼠操纵的局限性</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
