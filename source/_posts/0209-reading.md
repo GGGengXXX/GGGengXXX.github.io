@@ -807,6 +807,22 @@ aligns with
 
 first realistic world monitor
 
+能够生成环境
+
+core modules ： 1.  Part-disentangled Motion Injection 2. Scene-frame Reconstruction
+
+first frame 使用 3D VAE 得到 latent
+
+运动序列分为 头 手 其他，头部使用 camera encoder，手，其他使用motion encoder
+
+场景重建为点云使用encoder得到latent
+
+latent全部拼接输入DiT
+
+最后输出第一视角视频
+
+
+
 
 
 我们想要做的是可交互的4D生成。从具体的任务而言，包括应用于具身的任务 一般场景的4D重建 主体的运动4D生成

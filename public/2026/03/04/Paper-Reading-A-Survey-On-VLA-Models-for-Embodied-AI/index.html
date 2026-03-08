@@ -27,7 +27,7 @@
 <meta property="og:description" content="定义：embodied AI 领域的一类多模态模型 &#x3D;&gt; (models：Vision Language Action) V 模态 和 VLMs 相似，使用一些 vision foundation model 来作为 vision encoder ，从而得到 对于当前 environment 的视觉表征 (pretrained visual representation) L 模态 对 t">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2026-03-04T02:22:25.000Z">
-<meta property="article:modified_time" content="2026-03-04T13:46:17.251Z">
+<meta property="article:modified_time" content="2026-03-05T12:20:49.013Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="paper reading">
 <meta name="twitter:card" content="summary_large_image">
@@ -229,7 +229,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          524 words
+          957 words
         
       </span>
     
@@ -240,7 +240,7 @@
         
         
         
-          5 mins
+          8 mins
         
       </span>
     
@@ -349,7 +349,36 @@
 <p><strong>RL + LLM</strong></p>
 <p>由LLM来设置奖励函数</p>
 <p>工作流程</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-number">1</span>️⃣ <span class="hljs-keyword">LLM </span>写初始奖励函数<br>   ↓<br><span class="hljs-number">2</span>️⃣ 机器人用这个奖励函数训练<br>   ↓<br><span class="hljs-number">3</span>️⃣ 看训练效果怎么样<br>   ↓<br><span class="hljs-number">4</span>️⃣ 告诉 <span class="hljs-keyword">LLM&quot;哪里不好&quot;</span><br><span class="hljs-keyword"></span>   ↓<br><span class="hljs-number">5</span>️⃣ <span class="hljs-keyword">LLM </span>修改奖励函数<br>   ↓<br><span class="hljs-number">6</span>️⃣ 重复 <span class="hljs-number">2</span><span class="hljs-number">-5</span>，直到效果最好<br><br></code></pre></td></tr></table></figure>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-number">1</span>️⃣ <span class="hljs-keyword">LLM </span>写初始奖励函数<br>   ↓<br><span class="hljs-number">2</span>️⃣ 机器人用这个奖励函数训练<br>   ↓<br><span class="hljs-number">3</span>️⃣ 看训练效果怎么样<br>   ↓<br><span class="hljs-number">4</span>️⃣ 告诉 <span class="hljs-keyword">LLM&quot;哪里不好</span><br><span class="hljs-keyword"></span>   ↓<br><span class="hljs-number">5</span>️⃣ <span class="hljs-keyword">LLM </span>修改奖励函数<br>   ↓<br><span class="hljs-number">6</span>️⃣ 重复 <span class="hljs-number">2</span><span class="hljs-number">-5</span>，直到效果最好<br><br></code></pre></td></tr></table></figure>
+<h4 id="pvr-pretrained-vision-representation"><a class="markdownIt-Anchor" href="#pvr-pretrained-vision-representation"></a> PVR pretrained vision representation</h4>
+<p>视觉表征是对环境的观测 很重要！</p>
+<p><strong>CLIP</strong></p>
+<p>对文本 - 图片 做 embeddings</p>
+<p><strong>R3M</strong></p>
+<p>两个核心目标： 时间对比学习 + 视频语言对齐</p>
+<p><strong>Time Constrastive Learning</strong></p>
+<p>理解视频中多个视频帧、多个动作之间的先后顺序</p>
+<p>会抽取三个帧，锚点帧，正样本（和锚点帧接近），负样本（和锚点帧很远）</p>
+<p>一个视频可以采样得到很多这样的数据</p>
+<p><strong>Video Language Alignment</strong></p>
+<p>使用弱监督，一个视频对应的文本描述比较模糊，信息量较少。训练模型对video的表征中包含language的信息。</p>
+<p>对于一个视频中的所有帧，他们都是使用同一个文本描述</p>
+<p>损失中加入正则化，保证表征的稀疏性</p>
+<blockquote>
+<p>稀疏最直观的表现就是输出的向量中有很多 0 。如果信息比较丰富的话，这个向量几乎都是非零值，那就会导致输出的表征中包含了太多杂乱的信息，Action模型在接受这个表征的时候，决策可能会被一些杂讯干扰，无法专注于动作本身</p>
+</blockquote>
+<p>Loss 包含三个部分， 时间对比的损失 + 视频语言对齐的损失 + 正则化损失</p>
+<p><strong>VIP</strong></p>
+<blockquote>
+<p>什么是 <code>MAE</code></p>
+<p>Mask AutoEncoder,</p>
+<p>AutoEncoder 由三个部分来组成 encoder bottleneck decoder</p>
+<p>使用ViT</p>
+<p>encoder 把图片变成一个 latent，接着bottleneck强迫丢掉latent中的噪音，最后decoder 努力还原一开始输入的图片</p>
+<p>MAE 先把图片进行切片，分成一个个的patch，比如 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>16</mn><mo>×</mo><mn>16</mn></mrow><annotation encoding="application/x-tex">16\times 16</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mord">6</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">6</span></span></span></span> 然后随机删除 75 % 的块，是模型还原原本的图片</p>
+<p>这是一种自监督的学习，可以从互联网上获得无数的图片，使得模型学会 <code>完形填空</code></p>
+</blockquote>
+<p><strong>Voltron</strong></p>
 
                 
               </div>
