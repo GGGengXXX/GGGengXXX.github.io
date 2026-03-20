@@ -27,7 +27,7 @@
 <meta property="og:description" content="Pre knowledge 光流和PointTracking ：光流指的是在相邻的两张图片 点 (u1,v1)(u_1,v_1)(u1​,v1​) 到 点 (u2,v2)(u_2,v_2)(u2​,v2​) 所组成的矢量，而pointTracking(2D)指的是更长时的，一个点在所有帧上的轨迹，而不只是关注相邻的两帧。  4D表征： PointWorld：3D点流，分为状态和动作，状态使用场景">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2026-02-07T13:09:09.000Z">
-<meta property="article:modified_time" content="2026-03-05T13:00:12.009Z">
+<meta property="article:modified_time" content="2026-03-06T13:23:30.456Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -228,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.9k words
+          6k words
         
       </span>
     
@@ -710,6 +710,13 @@ c-16-25.333-24-45-24-59z'/></svg></span></span></span></span></span></span></spa
 <p>然后根据这个mask，首帧ego-view，text prompt 得到第一视角下的视频</p>
 <h3 id="playerone"><a class="markdownIt-Anchor" href="#playerone"></a> Playerone</h3>
 <p>first realistic world monitor</p>
+<p>能够生成环境</p>
+<p>core modules ： 1.  Part-disentangled Motion Injection 2. Scene-frame Reconstruction</p>
+<p>first frame 使用 3D VAE 得到 latent</p>
+<p>运动序列分为 头 手 其他，头部使用 camera encoder，手，其他使用motion encoder</p>
+<p>场景重建为点云使用encoder得到latent</p>
+<p>latent全部拼接输入DiT</p>
+<p>最后输出第一视角视频</p>
 <p>我们想要做的是可交互的4D生成。从具体的任务而言，包括应用于具身的任务 一般场景的4D重建 主体的运动4D生成</p>
 <p>具身的任务是指对场景，机器人等做4D的表征，让模型了解这一个场景，然后做出决策，例如Dream2Flow、PointWorld</p>
 <p>一般场景的4D重建包括 Any4D、D4RT、TrackingWorld。</p>
