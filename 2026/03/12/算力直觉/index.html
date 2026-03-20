@@ -1,0 +1,881 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="模型的参数量和存储大小的关系 核心计算 ： 模型存储 &#x3D; 参数量 ×\times× 每个参数的字节数    模型精度 每个参数占用     FP32 4 Bytes   FP16 2 Bytes   INT 8 1 Bytes   INT 4 0.5Bytes    例如 FP32下，4B参数 &#x3D;&gt; 4 * 10 ^ 9（4 Billion） 个参数 &#x3D;&gt; 占用存储 8GB  显存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算力直觉">
+<meta property="og:url" content="http://example.com/2026/03/12/%E7%AE%97%E5%8A%9B%E7%9B%B4%E8%A7%89/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="模型的参数量和存储大小的关系 核心计算 ： 模型存储 &#x3D; 参数量 ×\times× 每个参数的字节数    模型精度 每个参数占用     FP32 4 Bytes   FP16 2 Bytes   INT 8 1 Bytes   INT 4 0.5Bytes    例如 FP32下，4B参数 &#x3D;&gt; 4 * 10 ^ 9（4 Billion） 个参数 &#x3D;&gt; 占用存储 8GB  显存">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-03-12T06:27:06.000Z">
+<meta property="article:modified_time" content="2026-03-16T02:41:57.429Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>算力直觉 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="算力直觉"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-03-12 14:27" pubdate>
+          March 12, 2026 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          310 words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          3 mins
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">算力直觉</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <hr />
+<h2 id="模型的参数量和存储大小的关系"><a class="markdownIt-Anchor" href="#模型的参数量和存储大小的关系"></a> 模型的参数量和存储大小的关系</h2>
+<p>核心计算 ： 模型存储 = 参数量 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>×</mo></mrow><annotation encoding="application/x-tex">\times</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord">×</span></span></span></span> 每个参数的字节数</p>
+<table>
+<thead>
+<tr>
+<th>模型精度</th>
+<th>每个参数占用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FP32</td>
+<td>4 Bytes</td>
+</tr>
+<tr>
+<td>FP16</td>
+<td>2 Bytes</td>
+</tr>
+<tr>
+<td>INT 8</td>
+<td>1 Bytes</td>
+</tr>
+<tr>
+<td>INT 4</td>
+<td>0.5Bytes</td>
+</tr>
+</tbody>
+</table>
+<p>例如</p>
+<p>FP32下，4B参数 =&gt; 4 * 10 ^ 9（4 Billion） 个参数 =&gt; 占用存储 8GB</p>
+<h2 id="显存占用-模型大小"><a class="markdownIt-Anchor" href="#显存占用-模型大小"></a> 显存占用 !== 模型大小</h2>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>显存</mtext><mo>=</mo><mtext>模型权重</mtext><mo>+</mo><mi>K</mi><mi>V</mi><mtext> </mtext><mi>C</mi><mi>a</mi><mi>c</mi><mi>h</mi><mi>e</mi><mo>+</mo><mi>a</mi><mi>c</mi><mi>t</mi><mi>i</mi><mi>v</mi><mi>a</mi><mi>t</mi><mi>i</mi><mi>o</mi><mi>n</mi></mrow><annotation encoding="application/x-tex">显存=模型权重 + KV \ Cache +activation
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord cjk_fallback">显</span><span class="mord cjk_fallback">存</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord cjk_fallback">模</span><span class="mord cjk_fallback">型</span><span class="mord cjk_fallback">权</span><span class="mord cjk_fallback">重</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace"> </span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mord mathnormal">a</span><span class="mord mathnormal">c</span><span class="mord mathnormal">h</span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathnormal">a</span><span class="mord mathnormal">c</span><span class="mord mathnormal">t</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mord mathnormal">a</span><span class="mord mathnormal">t</span><span class="mord mathnormal">i</span><span class="mord mathnormal">o</span><span class="mord mathnormal">n</span></span></span></span></span></p>
+<p><strong>经验公式</strong></p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tex">推理显存=1.2 ~ 1.5 倍模型大小<br></code></pre></td></tr></table></figure>
+<h2 id="常见模型大小"><a class="markdownIt-Anchor" href="#常见模型大小"></a> 常见模型大小</h2>
+<h2 id="llm"><a class="markdownIt-Anchor" href="#llm"></a> LLM</h2>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>参数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LLaMA 7B</td>
+<td>7B</td>
+</tr>
+<tr>
+<td>LLaMA 13B</td>
+<td>13B</td>
+</tr>
+<tr>
+<td>LLaMA 70B</td>
+<td>70B</td>
+</tr>
+<tr>
+<td>GPT-3</td>
+<td>175B</td>
+</tr>
+<tr>
+<td>Mistral 7B</td>
+<td>7B</td>
+</tr>
+<tr>
+<td>Mixtral 8x7B</td>
+<td>46B (active 13B)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="diffusion模型"><a class="markdownIt-Anchor" href="#diffusion模型"></a> Diffusion模型</h2>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>参数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stable Diffusion 1.5</td>
+<td>860M</td>
+</tr>
+<tr>
+<td>Stable Diffusion XL</td>
+<td>3.5B</td>
+</tr>
+<tr>
+<td>DiT</td>
+<td>0.6B – 2B</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="视觉模型"><a class="markdownIt-Anchor" href="#视觉模型"></a> 视觉模型</h2>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ResNet‑50</td>
+<td>25M</td>
+</tr>
+<tr>
+<td>Vision Transformer ViT‑B</td>
+<td>86M</td>
+</tr>
+<tr>
+<td>Vision Transformer ViT‑H</td>
+<td>632M</td>
+</tr>
+</tbody>
+</table>
+<h2 id="gpu显存-可运行模型"><a class="markdownIt-Anchor" href="#gpu显存-可运行模型"></a> GPU显存 &amp; 可运行模型</h2>
+<h3 id="8gb-gpu"><a class="markdownIt-Anchor" href="#8gb-gpu"></a> 8GB GPU</h3>
+<p>例如：</p>
+<ul>
+<li>NVIDIA RTX 3070</li>
+<li>NVIDIA RTX 4060</li>
+</ul>
+<p>可以运行：</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3B</td>
+</tr>
+<tr>
+<td>7B（INT4）</td>
+</tr>
+<tr>
+<td>Stable Diffusion</td>
+</tr>
+</tbody>
+</table>
+<p>基本结论：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">8GB</span> = 小模型 / diffusion<br></code></pre></td></tr></table></figure>
+<hr />
+<h3 id="12gb-gpu"><a class="markdownIt-Anchor" href="#12gb-gpu"></a> 12GB GPU</h3>
+<p>例如</p>
+<ul>
+<li>NVIDIA RTX 3060</li>
+<li>NVIDIA RTX 4070</li>
+</ul>
+<p>可以运行</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7B FP16</td>
+</tr>
+<tr>
+<td>13B INT4</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="24gb-gpu研究者最常见"><a class="markdownIt-Anchor" href="#24gb-gpu研究者最常见"></a> 24GB GPU（研究者最常见）</h3>
+<p>例如</p>
+<ul>
+<li>NVIDIA RTX 3090</li>
+<li>NVIDIA RTX 4090</li>
+</ul>
+<p>可以运行</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>13B FP16</td>
+</tr>
+<tr>
+<td>30B INT4</td>
+</tr>
+<tr>
+<td>SDXL</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="80gb-gpu数据中心"><a class="markdownIt-Anchor" href="#80gb-gpu数据中心"></a> 80GB GPU（数据中心）</h3>
+<p>例如</p>
+<ul>
+<li>NVIDIA A100</li>
+<li>NVIDIA H100</li>
+</ul>
+<p>可以运行</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>70B FP16</td>
+</tr>
+<tr>
+<td>130B INT8</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="训练显存比推理大很多"><a class="markdownIt-Anchor" href="#训练显存比推理大很多"></a> 训练显存（比推理大很多）</h2>
+<p>训练需要保存：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs">参数<br>梯度<br>优化器状态<br>activation<br></code></pre></td></tr></table></figure>
+<p>经验公式：</p>
+<figure class="highlight gml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gml">训练显存 ≈ <span class="hljs-number">6</span><span class="hljs-variable language_">x</span> ~ <span class="hljs-number">8</span><span class="hljs-variable language_">x</span> 模型大小<br></code></pre></td></tr></table></figure>
+<p>例如</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>FP16大小</th>
+<th>训练显存</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7B</td>
+<td>14GB</td>
+<td>100GB</td>
+</tr>
+<tr>
+<td>13B</td>
+<td>26GB</td>
+<td>200GB</td>
+</tr>
+<tr>
+<td>70B</td>
+<td>140GB</td>
+<td>1TB</td>
+</tr>
+</tbody>
+</table>
+<p>所以训练通常需要：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nix">多卡 <span class="hljs-operator">+</span> ZeRO <span class="hljs-symbol">/</span> FSDP<br></code></pre></td></tr></table></figure>
+<h2 id="flops相关"><a class="markdownIt-Anchor" href="#flops相关"></a> FLOPs相关</h2>
+<p>训练 Transformer LLM</p>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs excel">训练 FLOPs = <span class="hljs-number">6</span> * 参数量 * token数<br>最优 token 数 = <span class="hljs-number">20</span> * 参数量<br>=&gt;<br>训练FLOPs = <span class="hljs-number">120</span> * 参数量 ^ <span class="hljs-number">2</span><br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>算力直觉</div>
+      <div>http://example.com/2026/03/12/算力直觉/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>Author</div>
+          <div>John Doe</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>Posted on</div>
+          <div>March 12, 2026</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>Licensed under</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - Attribution">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/03/08/TTT/" title="TTT">
+                        <span class="hidden-mobile">TTT</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+</body>
+</html>
